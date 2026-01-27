@@ -1,0 +1,20 @@
+export const OPERATOR = {
+    AMAZON: 'Amazon',
+    ZEPTO: 'Zepto',
+    SWIGGY: 'Swiggy',
+    BIGBASKET: 'BigBasket',
+}
+
+export const PERFORMANCETABS = {
+    OVERVIEW: 'OVERVIEW',
+    PORTFOLIOS: 'PORTFOLIOS',
+    CAMPAIGNS: 'CAMPAIGNS',
+    ADGROUPS: 'ADGROUPS',
+    KEYWORDS: 'KEYWORDS',
+    PRODUCTS: 'PRODUCTS'
+}
+
+export const NEGATIVETABS = {
+    SUGGESTED:"SUGGESTED",
+    EXISTING:"EXISTING"
+}
