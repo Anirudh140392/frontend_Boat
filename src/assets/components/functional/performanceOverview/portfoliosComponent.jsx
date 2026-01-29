@@ -29,7 +29,7 @@ const PortfoliosComponent = () => {
 
     const PortfoliosColumnAmazon = [
         {
-            field: "portfolio_name",
+            field: "Portfolio_Name",
             headerName: "PORTFOLIO",
             minWidth: 200
         },
@@ -78,124 +78,108 @@ const PortfoliosComponent = () => {
             minWidth: 100,
         },*/
         {
-            field: "spend_curr",
+            field: "Spend",
             headerName: "SPENDS",
             minWidth: 150,
             renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.spend_curr} percentValue={params.row.spend_diff} />
+                <ColumnPercentageDataComponent mainValue={params.row.Spend} percentValue={params.row.Spend_diff} />
             ), //type: "number", align: "left",
             //headerAlign: "left",
         },
          {
-            field: "sales_curr",
+            field: "Sales",
             headerName: "SALES",
             minWidth: 150,
             renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.sales_curr} percentValue={params.row.sales_diff} />
+                <ColumnPercentageDataComponent mainValue={params.row.Sales} percentValue={params.row.Sales_diff} />
             ), //type: "number", align: "left",
            // headerAlign: "left",
         },
        {
-            field: "impressions_curr",
+            field: "Impressions",
             headerName: "IMPRESSIONS",
             minWidth: 150,
             renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.impressions_curr} percentValue={params.row.impressions_diff} />
+                <ColumnPercentageDataComponent mainValue={params.row.Impressions} percentValue={params.row.Impressions_diff} />
             ), //type: "number", align: "left",
             //headerAlign: "left",
-        },
-        {
-            field: "impressions_diff",
-            headerName: "IMPR % CHANGE",
-            hideable: false
-        },
-        {
-            field: "clicks_curr",
-            headerName: "CLICKS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.clicks_curr} percentValue={params.row.clicks_diff} />
-            ), //type: "number", align: "left",
-            //headerAlign: "left",
-        },
-        {
-            field: "clicks_diff",
-            headerName: "CLICKS % CHANGE",
-            hideable: false
         },
         
         {
-            field: "orders_curr",
-            headerName: "ORDERS",
+            field: "Clicks",
+            headerName: "CLICKS",
             minWidth: 150,
             renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.orders_curr} percentValue={params.row.orders_diff} />
+                <ColumnPercentageDataComponent mainValue={params.row.Clicks} percentValue={params.row.Clicks_diff} />
             ), //type: "number", align: "left",
             //headerAlign: "left",
         },
+
+        
         {
-            field: "orders_diff",
-            headerName: "ORDER % CHANGE",
-            hideable: false
+            field: "Orders",
+            headerName: "ORDERS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Orders} percentValue={params.row.Orders_diff} />
+            ), //type: "number", align: "left",
+            //headerAlign: "left",
         },
+       
         {
-            field: "ctr_curr",
+            field: "ctr",
             headerName: "CTR",
             minWidth: 150,
             renderCell: (params) => (
-                <NewPercentageDataComponent firstValue={params.row.ctr_curr} secValue={params.row.ctr_diff} />
+                <ColumnPercentageDataComponent mainValue={params.row.ctr} percentValue={params.row.ctr_diff} />
             ), //type: "number", align: "left",
            // headerAlign: "left",
         },
         {
-            field: "cpc_curr",
+            field: "cpc",
             headerName: "CPC",
             minWidth: 150,
             renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.cpc_curr} percentValue={params.row.cpc_diff} />
+                <ColumnPercentageDataComponent mainValue={params.row.cpc} percentValue={params.row.cpc_diff} />
             ), //type: "number", align: "left",
            // headerAlign: "left",
         },
         {
-            field: "cvr_curr",
+            field: "cvr",
             headerName: "CVR",
             minWidth: 150,
             renderCell: (params) => (
-                <NewPercentageDataComponent firstValue={params.row.cvr_curr} secValue={params.row.cvr_diff} />
+                <ColumnPercentageDataComponent mainValue={params.row.cvr} percentValue={params.row.cvr_diff} />
             ), //type: "number", align: "left",
            // headerAlign: "left",
         },
        
         
         {
-            field: "roas_curr",
+            field: "roas",
             headerName: "ROAS",
             minWidth: 150,
             renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.roas_curr} percentValue={params.row.roas_diff} />
+                <ColumnPercentageDataComponent mainValue={params.row.roas} percentValue={params.row.roas_diff} />
             ), //type: "number", align: "left",
            // headerAlign: "left",
         },
+        
         {
-            field: "roas_diff",
-            headerName: "ROAS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "acos_curr",
+            field: "acos",
             headerName: "ACOS",
             minWidth: 150,
             renderCell: (params) => (
-                <NewPercentageDataComponent firstValue={params.row.acos_curr} secValue={params.row.acos_diff} />
+                   <ColumnPercentageDataComponent mainValue={params.row.acos} percentValue={params.row.acos_diff} />
             ), //type: "number", align: "left",
            // headerAlign: "left",
         },
         {
-            field: "aov_curr",
+            field: "aov",
             headerName: "AOV",
             minWidth: 150,
             renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.aov_curr} percentValue={params.row.aov_diff} />
+                <ColumnPercentageDataComponent mainValue={params.row.aov} percentValue={params.row.aov_diff} />
             ), //type: "number", align: "left",
            // headerAlign: "left",
         },

@@ -48,7 +48,7 @@ const KeywordsComponent = () => {
         const endDate = formatDate(dateRange[0].endDate);
 
         try {
-            const response = await fetch(`https://react-api-script.onrender.com/boat/keywords?start_date=${startDate}&end_date=${endDate}&platform=${operator}&campaign_name=${campaignName}`, {
+            const response = await fetch(`https://react-api-script.onrender.com/boat/keyword?start_date=${startDate}&end_date=${endDate}&platform=${operator}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -105,373 +105,211 @@ const KeywordsComponent = () => {
         setConfirmation({ show: true, campaignType, keywordId, targetId, adGroupId, campaignId });
     };
 
-    const KeywordsColumnAmazon = [
-        {
-            field: "keyword_x",
-            headerName: "TARGET",
-            minWidth: 150,
-            renderCell: (params) => (
-                <div className="text-icon-div cursor-pointer" onClick={() => handleKeywordClick(params.row.keyword_x, params.row.campaign_id_x)}>
-                    <Typography className="redirect" variant="body2">{params.row.keyword_x}</Typography>
-                </div>
+  const KeywordsColumnAmazon = [
+  {
+    field: "Keyword_Text",
+    headerName: "TARGET",
+    minWidth: 150,
+    renderCell: (params) => (
+     
+        <Typography className="redirect" variant="body2">
+          {params.row.Keyword_Text}
+        </Typography>
+     
+    ),
+  },
+
+  {
+    field: "Bid",
+    headerName: "BID",
+    minWidth: 150,
+    type: "number",
+    renderCell: (params) => (
+      <BidCell
+        value={params.row.Bid}
+        campaignId={params.row.Campaign_ID}
+        targetId={params.row.Keyword_ID}
+        campaignType={params.row.Product}
+        adGroupId={params.row.Ad_Group_ID}
+        keywordId={params.row.Keyword_ID}
+        platform={operator}
+        onUpdate={(
+          campaignId,
+          targetId,
+          campaignType,
+          adGroupId,
+          keywordId,
+          newBid
+        ) => {
+          setKeywordsData(prev => ({
+            ...prev,
+            data: prev.data.map(row =>
+              row.Campaign_ID === campaignId &&
+              row.Keyword_ID === keywordId &&
+              row.Ad_Group_ID === adGroupId
+                ? { ...row, Bid: newBid }
+                : row
             ),
-        },
-         /*{
-            field: "match_type_x",
-            headerName: "MATCH TYPE",
-            minWidth: 150,
-            align: "left",
-            headerAlign: "left",
-        },*/
-         
+          }));
+        }}
+        onSnackbarOpen={handleSnackbarOpen}
+      />
+    ),
+  },
 
-        {
-            field: "keyword_bid_x",
-            headerName: "BID",
-            minWidth: 150,
-            renderCell: (params) => (
-                <BidCell
-                    value={params.row.keyword_bid_x}
-                    campaignId={params.row.campaign_id_x}
-                    targetId={params.row.targeting_id_x}
-                    campaignType={params.row.campaign_type_x}
-                    adGroupId={params.row.ad_group_id_x}
-                    keywordId={params.row.keyword_id_x}
-                    platform={operator}
-                    /* parent (or cell renderer) */
-                    onUpdate={(
-                        campaignId,
-                        targetId,
-                        campaignType,
-                        adGroupId,
-                        keywordId,
-                        newBid
-                    ) => {
-                        console.log('Updating keyword bid:', {
-                            campaignId,
-                            targetId,
-                            campaignType,
-                            adGroupId,
-                            keywordId,
-                            newBid,
-                        });
+  {
+    field: "State",
+    headerName: "STATUS",
+    minWidth: 100,
+    renderCell: (params) => (
+      <Switch
+        checked={params.row.State === "enabled"}
+        onChange={() =>
+          handleToggle(
+            params.row.Product,
+            params.row.Keyword_ID,
+            params.row.Keyword_ID,
+            params.row.Ad_Group_ID,
+            params.row.Campaign_ID
+          )
+        }
+      />
+    ),
+  },
 
-                        setKeywordsData(prevData => {
-                            const updatedData = {
-                                ...prevData,
-                                data: prevData.data.map(row =>
-                                    row.campaign_id_x === campaignId &&
-                                        row.targeting_id_x === targetId &&
-                                        row.campaign_type_x === campaignType &&
-                                        row.ad_group_id_x === adGroupId &&
-                                        row.keyword_id_x === keywordId
-                                        ? { ...row, keyword_bid_x: newBid }
-                                        : row
-                                ),
-                            };
+  {
+    field: "Spend",
+    headerName: "SPENDS",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Spend}
+        percentValue={params.row.Spend_diff}
+      />
+    ),
+  },
 
-                            console.log('Updated keywordsData:', updatedData);
-                            return updatedData;
-                        });
-                    }}
-                    onSnackbarOpen={handleSnackbarOpen}
-                />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "status",
-            headerName: "STATUS",
-            minWidth: 100,
-            renderCell: (params) => {
-                if (updatingKeywords[params.row.campaign_id_x] && updatingKeywords[params.row.campaign_type_x] && updatingKeywords[params.row.keyword_id_x] && updatingKeywords[params.row.targeting_id_x] && updatingKeywords[params.row.ad_group_id_x]) {
-                    return <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}><CircularProgress size={24} /></Box>;
-                }
-                return (
-                    <Switch
-                        disabled={params.row.status === 2}
-                        checked={params.row.status === 1}
-                        onChange={() => handleToggle(params.row.campaign_type_x, params.row.keyword_id_x, params.row.targeting_id_x, params.row.ad_group_id_x, params.row.campaign_id_x,)}
-                    />
-                )
-            },
-            type: "singleSelect",
-        },
-        /*{ field: "ad_group_name", headerName: "AD GROUP", minWidth: 150, },*/
-        {
-            field: "spend_x",
-            headerName: "SPENDS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.spend_x} percentValue={params.row.spend_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "spend_diff",
-            headerName: "SPENDS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "sales_x",
-            headerName: "SALES",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.sales_x} percentValue={params.row.sales_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "sales_diff",
-            headerName: "SALES % CHANGE",
-            hideable: false
-        },
-        {
-            field: "impressions_x",
-            headerName: "IMPRESSIONS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.impressions_x} percentValue={params.row.impressions_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "clicks_x",
-            headerName: "CLICKS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.clicks_x} percentValue={params.row.clicks_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-         {
-            field: "orders_x",
-            headerName: "ORDERS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.orders_x} percentValue={params.row.orders_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "ctr_x",
-            headerName: "CTR",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.ctr_x} percentValue={params.row.ctr_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "ctr_diff",
-            headerName: "CTR % CHANGE",
-            hideable: false
-        },
-        {
-            field: "cpc_x",
-            headerName: "CPC",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.cpc_x} percentValue={params.row.cpc_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "cvr_x",
-            headerName: "CVR",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.cvr_x} percentValue={params.row.cvr_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "roas_x",
-            headerName: "ROAS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.roas_x} percentValue={params.row.roas_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "roas_diff",
-            headerName: "ROAS % CHANGE",
-            hideable: false
-        },
-         {
-            field: "acos_x",
-            headerName: "ACOS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.acos_x} percentValue={params.row.acos_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "aov_x",
-            headerName: "AOV",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.aov_x} percentValue={params.row.aov_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "campaign_name_x",
-            headerName: "CAMPAIGN",
-            minWidth: 300,
-        },
-        {
-            field: "ad_group_name_x",
-            headerName: "AD GROUP",
-            minWidth: 150,
-            align: "left",
-            headerAlign: "left",
-        },
-        /*{
-            field: "views",
-            headerName: "IMPRESSIONS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.views} percentValue={params.row.views_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "views_diff",
-            headerName: "IMPRESSIONS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "clicks",
-            headerName: "CLICKS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.clicks} percentValue={params.row.clicks_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "clicks_diff",
-            headerName: "CLICKS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "cpc",
-            headerName: "CPC",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.cpc} percentValue={params.row.cpc_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "cpc_diff",
-            headerName: "CPC % CHANGE",
-            hideable: false
-        },
-        {
-            field: "direct_orders",
-            headerName: "DIRECT ORDERS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.direct_orders} percentValue={params.row.direct_orders_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "direct_orders_diff",
-            headerName: "DIRECT ORDERS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "indirect_orders",
-            headerName: "INDIRECT ORDERS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.indirect_orders} percentValue={params.row.indirect_orders_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "indirect_orders_diff",
-            headerName: "INDIRECT ORDERS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "indirect_sales",
-            headerName: "INDIRECT SALES",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.indirect_sales} percentValue={params.row.indirect_sales_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "indirect_sales_diff",
-            headerName: "INDIRECT SALES % CHANGE",
-            hideable: false
-        },
-        {
-            field: "acos",
-            headerName: "ACOS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.acos} percentValue={params.row.acos_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "acos_diff",
-            headerName: "ACOS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "roi_direct",
-            headerName: "DIRECT ROAS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.roi_direct} percentValue={params.row.roi_direct_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "roi_direct_diff",
-            headerName: "DIRECT ROAS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "cvr",
-            headerName: "CVR",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.cvr} percentValue={params.row.cvr_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
+  {
+    field: "Sales",
+    headerName: "SALES",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Sales}
+        percentValue={params.row.Sales_diff}
+      />
+    ),
+  },
 
-        {
-            field: "cvr_diff",
-            headerName: "CVR % CHANGE",
-            hideable: false
-        },
-        {
-            field: "aov",
-            headerName: "AOV",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.aov} percentValue={params.row.aov_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "aov_diff",
-            headerName: "AOV % CHANGE",
-            hideable: false
-        },
-        { field: "ad_type", headerName: "AD TYPE", minWidth: 150, },*/
-    ];
+  {
+    field: "Impressions",
+    headerName: "IMPRESSIONS",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Impressions}
+        percentValue={params.row.Impressions_diff}
+      />
+    ),
+  },
+
+  {
+    field: "Clicks",
+    headerName: "CLICKS",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Clicks}
+        percentValue={params.row.Clicks_diff}
+      />
+    ),
+  },
+
+  {
+    field: "Orders",
+    headerName: "ORDERS",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Orders}
+        percentValue={params.row.Orders_diff}
+      />
+    ),
+  },
+
+  {
+    field: "ctr",
+    headerName: "CTR",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.ctr}
+        percentValue={params.row.ctr_diff}
+      />
+    ),
+  },
+
+  {
+    field: "cpc",
+    headerName: "CPC",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.cpc}
+        percentValue={params.row.cpc_diff}
+      />
+    ),
+  },
+
+  {
+    field: "cvr",
+    headerName: "CVR",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.cvr}
+        percentValue={params.row.cvr_diff}
+      />
+    ),
+  },
+
+  {
+    field: "roas",
+    headerName: "ROAS",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.roas}
+        percentValue={params.row.roas_diff}
+      />
+    ),
+  },
+
+  {
+    field: "acos",
+    headerName: "ACOS",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.acos}
+        percentValue={params.row.acos_diff}
+      />
+    ),
+  },
+
+  {
+    field: "Campaign_Name_Informational_only",
+    headerName: "CAMPAIGN",
+    minWidth: 300,
+  },
+
+  {
+    field: "Ad_Group_Name_Informational_only",
+    headerName: "AD GROUP",
+    minWidth: 150,
+  },
+];
+
 
     const KeywordsColumnZepto = [
         {

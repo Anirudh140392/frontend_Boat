@@ -10,7 +10,7 @@ import ExistingKeywordsDatatable from "../../components/functional/negativeKeywo
 
 const NegativeKeywordsComponent = () => {
     const location = useLocation();
-    const [showActiveTab, setShowActiveTab] = useState(NEGATIVETABS.SUGGESTED);
+    const [showActiveTab, setShowActiveTab] = useState(NEGATIVETABS.EXISTING);
     const [operatorName, setoperatorName] = useState("");
     const { dateRange } = useContext(overviewContext) || {
         dateRange: [{ startDate: new Date(), endDate: new Date() }],

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useContext,useMemo } from "react";
+import { useContext, useMemo } from "react";
 import OverviewFunnelChart from "./overview/overviewFunnelChart";
 import MuiDataTableComponent from "../../common/muidatatableComponent";
 import overviewContext from "../../../../store/overview/overviewContext";
@@ -8,179 +8,55 @@ import ColumnPercentageDataComponent from "../../common/columnPercentageDataComp
 import GoalComponent from "./overview/goalComponent";
 import ErrorBoundary from "../../common/erroBoundryComponent";
 import OnePercentageDataComponent from "../../common/onePercentageComponent";
+import OverviewCardTopBox from "./overview/OverviewCardTopBox";
+import GoalsOverview from "./GoalsOverviews/GoalsOverview";
+import AggregatedView from "./overview/AggregatedView";
 
 const OverviewComponent = () => {
-    
+
     const dataContext = useContext(overviewContext)
-    const { overviewData, getOverviewData,getBrandsData, dateRange,campaignName, formatDate } = dataContext
+    const { overviewData, getOverviewData, getBrandsData, dateRange, campaignName, formatDate } = dataContext
     //const { dateRange, getBrandsData, brands, formatDate, campaignName } = useContext(overviewContext)
     const { brands } = dataContext;
     const [searchParams] = useSearchParams();
     const operator = searchParams.get("operator");
 
     const CategoryColumnsAmazon = [
-        { field: "portfolio_name", headerName: "CATEGORY", minWidth: 150 },
-        {
-            field: "spend_x",
-            headerName: "SPENDS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-
-        },
-        {
-            field: "sales_x",
-            headerName: "SALES",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "impressions_x",
-            headerName: "IMPRESSIONS",
-            minWidth: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "clicks_x",
-            headerName: "CLICKS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "orders_x",
-            headerName: "ORDERS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        
-        
-        
-        {
-            field: "ctr",
-            headerName: "CTR",
-            minWidth: 150,
-             renderCell: (params) => (
-                <OnePercentageDataComponent firstValue={params.row.ctr}  />
-            ),
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "cpc",
-            headerName: "CPC",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "cvr",
-            headerName: "CVR",
-            minWidth: 150,
-             renderCell: (params) => (
-                <OnePercentageDataComponent firstValue={params.row.cvr}  />
-            ),
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "roas",
-            headerName: "ROAS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "acos",
-            headerName: "ACOS",
-            minWidth: 150,
-             renderCell: (params) => (
-                <OnePercentageDataComponent firstValue={params.row.acos}  />
-            ),
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "aov",
-            headerName: "AOV",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        }
+        { field: "Campaign_Tags", headerName: "CAMPAIGN TAGS", minWidth: 200, type: "string", align: "left", headerAlign: "left" },
+        { field: "Estimated_Budget_Consumed", headerName: "SPEND", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Clicks", headerName: "CLICKS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Impressions", headerName: "IMPRESSIONS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Total_Sales", headerName: "SALES", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Total_Orders", headerName: "ORDERS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "ROAS", headerName: "ROAS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "CPM", headerName: "CPM", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "ACOS", headerName: "ACOS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
     ]
 
-     const CategoryColumnsZepto = [
-        { field: "category", headerName: "CATEGORY", minWidth: 150 },
+    const CategoryColumnsZepto = [
+        { field: "Campaign_Tags", headerName: "CAMPAIGN TAGS", minWidth: 200, type: "string", align: "left", headerAlign: "left" },
+        { field: "Spend", headerName: "SPEND", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Clicks", headerName: "CLICKS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Impressions", headerName: "IMPRESSIONS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Sales", headerName: "SALES", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Orders", headerName: "ORDERS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "ROAS", headerName: "ROAS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "CPM", headerName: "CPM", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "ACOS", headerName: "ACOS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+    ];
+
+    const CategoryColumnsFlipkart = [
         {
-            field: "total_impressions",
-            headerName: "IMPRESSIONS",
-            minWidth: 150,
-            type: "number",
+            field: "Campaign_Tags",
+            headerName: "CAMPAIGN TAGS",
+            minWidth: 200,
+            type: "string",
             align: "left",
             headerAlign: "left",
         },
         {
-            field: "total_clicks",
-            headerName: "CLICKS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "total_orders",
-            headerName: "ORDERS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "avg_cpm",
-            headerName: "CPM",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "total_cpc",
-            headerName: "CPC",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "total_spend",
-            headerName: "SPENDS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-
-        },
-        {
-            field: "sales",
-            headerName: "SALES",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "avg_roas",
-            headerName: "ROAS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        
-    ];
-
-     const CategoryColumnsBigBasket = [
-        { field: "category", headerName: "CATEGORY", minWidth: 150 },
-        {
-            field: "Impressions",
-            headerName: "IMPRESSIONS",
+            field: "Estimated_Budget_Consumed",
+            headerName: "SPEND",
             minWidth: 150,
             type: "number",
             align: "left",
@@ -190,74 +66,12 @@ const OverviewComponent = () => {
             field: "Clicks",
             headerName: "CLICKS",
             minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        
-        {
-            field: "Spend",
-            headerName: "SPENDS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-
-        },
-        {
-            field: "Sales",
-            headerName: "SALES",
-            minWidth: 150,
-            type: "number", align: "left",
+            type: "number",
+            align: "left",
             headerAlign: "left",
         },
         {
-            field: "ROI",
-            headerName: "ROAS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "CPC",
-            headerName: "CPC",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "CPM",
-            headerName: "CPM",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "CTR",
-            headerName: "CTR",
-            minWidth: 150,
-            renderCell: (params) => (
-                <OnePercentageDataComponent firstValue={params.row.CTR}  />
-            ),
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "ACOS",
-            headerName: "ACOS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <OnePercentageDataComponent firstValue={params.row.ACOS}  />
-            ),
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        
-    ];
-
-
-    const CategoryColumnsSwiggy = [
-        { field: "category", headerName: "CATEGORY", minWidth: 150 },
-        {
-            field: "impressions_x",
+            field: "Impressions",
             headerName: "IMPRESSIONS",
             minWidth: 150,
             type: "number",
@@ -265,72 +79,59 @@ const OverviewComponent = () => {
             headerAlign: "left",
         },
         {
-            field: "clicks_x",
-            headerName: "CLICKS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-        },
-        
-        {
-            field: "spends_x",
-            headerName: "SPENDS",
-            minWidth: 150,
-            type: "number", align: "left",
-            headerAlign: "left",
-
-        },
-        {
-            field: "sales_x",
+            field: "Total_Sales",
             headerName: "SALES",
             minWidth: 150,
-            type: "number", align: "left",
+            type: "number",
+            align: "left",
             headerAlign: "left",
         },
-        /*{
-            field: "ctr",
-            headerName: "CTR",
+
+        {
+            field: "Total_Orders",
+            headerName: "ORDERS",
             minWidth: 150,
-              renderCell: (params) => (
-                <OnePercentageDataComponent firstValue={params.row.ctr}  />
-            ),
-            type: "number", align: "left",
-            headerAlign: "left",
-        },*/
-         /*{
-            field: "cpc",
-            headerName: "CPC",
-            minWidth: 150,
-            
-            type: "number", align: "left",
-            headerAlign: "left",
-        },*/
-         {
-            field: "cpm",
-            headerName: "CPM",
-            minWidth: 150,
-            type: "number", align: "left",
+            type: "number",
+            align: "left",
             headerAlign: "left",
         },
         {
-            field: "roas",
+            field: "ROAS",
             headerName: "ROAS",
             minWidth: 150,
-            type: "number", align: "left",
+            type: "number",
+            align: "left",
             headerAlign: "left",
         },
-       
-        /*{
-            field: "acos",
+        {
+            field: "CPM",
+            headerName: "CPM",
+            minWidth: 150,
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+        {
+            field: "ACOS",
             headerName: "ACOS",
             minWidth: 150,
-              renderCell: (params) => (
-                <OnePercentageDataComponent firstValue={params.row.acos}  />
-            ),
-            type: "number", align: "left",
+            type: "number",
+            align: "left",
             headerAlign: "left",
-        },*/
-        
+        },
+    ];
+
+
+    const CategoryColumnsSwiggy = [
+        { field: "Campaign_Tags", headerName: "CAMPAIGN TAGS", minWidth: 200, type: "string", align: "left", headerAlign: "left" },
+        { field: "Spend", headerName: "SPEND", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Clicks", headerName: "CLICKS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Impressions", headerName: "IMPRESSIONS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Sales", headerName: "SALES", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Orders", headerName: "ORDERS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "ROAS", headerName: "ROAS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "CPM", headerName: "CPM", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "ACOS", headerName: "ACOS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
     ]
 
 
@@ -451,16 +252,16 @@ const OverviewComponent = () => {
         },
     ];
 
-    
+
 
     const columns = useMemo(() => {
-            if (operator === "Amazon") return CategoryColumnsAmazon;
-    
-            if (operator === "Zepto") return CategoryColumnsZepto;
-            if (operator === "BigBasket") return CategoryColumnsBigBasket;
-             if (operator === "Swiggy") return CategoryColumnsSwiggy;
-            return [];
-        }, [operator, brands]);
+        if (operator === "Amazon") return CategoryColumnsAmazon;
+        if (operator === "Zepto") return CategoryColumnsZepto;
+        if (operator === "Flipkart") return CategoryColumnsFlipkart;
+        if (operator === "Swiggy") return CategoryColumnsSwiggy;
+        if (operator === "Blinkit") return CategoryColumnsFlipkart; // Blinkit uses same structure as Flipkart
+        return CategoryColumnsFlipkart; // Default to standard structure
+    }, [operator, brands]);
 
 
     useEffect(() => {
@@ -506,54 +307,29 @@ const OverviewComponent = () => {
         return diff === 6 ? diff + 1 : diff;
     }
 
-    const filteredCatData = overviewData?.cat_table?.filter(row => row.category?.trim() !== '');
+    const filteredCatData = overviewData?.cat_table?.filter(row => {
+        // For new API structure with Campaign_Tags
+        if (row.Campaign_Tags) {
+            return row.Campaign_Tags?.trim() !== '';
+        }
+        // Fallback for old structure with category
+        return row.category?.trim() !== '';
+    });
     const filteredSubCatData = overviewData?.sub_cat_table?.filter(row => row.sub_category?.trim() !== '');
 
     return (
         <React.Fragment>
             <div className="shadow-box-con top-overview-con">
                 <div className="row">
-                    <div className="col-xl-4 col-lg-4 d-md-flex flex-md-column">
-                        <div className="svg-data-filter-con">
-                            <p>
-                                Compared to {daysDifference} days ago.{" "}
-                                {`${formatDate(dateRange[0].startDate)}-`}
-                                <br />
-                                {`${formatDate(dateRange[0].endDate)}`}
-                            </p>
-
-                        </div>
-                        <OverviewFunnelChart data={overviewData?.funnel} />
-                    </div>
-                    <div className="col-lg-8">
-                        <div className="row">
-                            <div className="col-md-4">
-                                <CTRWidget
-                                    firstHeadingText="Impressions"
-                                    firstHeadingData={`${overviewData?.metrics_data?.Impressions ? toLakhs(overviewData?.metrics_data?.Impressions) : "-"}`}
-                                    secondHeadingText="Clicks"
-                                    secondHeadingData={`${overviewData?.metrics_data?.Clicks ? toThousands(overviewData?.metrics_data?.Clicks) : "-"}`} />
-                            </div>
-                            <div className="col-md-4">
-                                <CTRWidget
-                                    firstHeadingText="Spends"
-                                    firstHeadingData={`${overviewData?.metrics_data?.Spend ? toLakhs(overviewData?.metrics_data?.Spend) : "-"}`}
-                                    secondHeadingText="Sales"
-                                    secondHeadingData={`${overviewData?.metrics_data?.Sales ? toLakhs(overviewData?.metrics_data?.Sales) : "-"}`} />
-                            </div>
-                            <div className="col-md-4">
-                                <CTRWidget
-                                    firstHeadingText="Orders"
-                                    firstHeadingData={`${overviewData?.metrics_data?.Orders ? toThousands(overviewData?.metrics_data?.Orders) : "-"}`}
-                                    secondHeadingText="ROAS"
-                                    secondHeadingData={`${overviewData?.metrics_data?.avg_roas ? overviewData?.metrics_data?.avg_roas : "-"}`} />
-                            </div>
-                        </div>
-                        <div className="agrregated-shadow-box-con aggregated-view-con mt-4">
+                    <OverviewCardTopBox overViewData={overviewData} />
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="agrregated-shadow-box-con aggregated-view-con">
                             <div className="px-3 py-2 border-bottom">
                                 <div className="row">
                                     <div className="col-lg-6">
-                                        <h5 className="mb-0">Category View</h5>
+                                        <h5 className="mb-0">Campaign Tag View</h5>
                                     </div>
                                 </div>
                                 <div>
@@ -565,6 +341,12 @@ const OverviewComponent = () => {
                                     columns={columns}
                                     data={filteredCatData} />
                             </div>
+                            <div className="shadow-box-con top-overview-con">
+                                <AggregatedView />
+                            </div>
+                            <div className="shadow-box-con top-overview-con">
+                                <GoalsOverview />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -573,7 +355,7 @@ const OverviewComponent = () => {
                 <div className="px-3 py-2 border-bottom">
                     <div className="row">
                         <div className="col-lg-6">
-                            <h5 className="mb-0">Subcategory View</h5>
+                            <h5 className="mb-0">Subcampaign Tag View</h5>
                         </div>
                     </div>
                     <div>

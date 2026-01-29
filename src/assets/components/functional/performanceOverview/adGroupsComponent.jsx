@@ -49,7 +49,7 @@ const AdGroupsComponent = () => {
 
         try {
             const response = await fetch(
-                `https://react-api-script.onrender.com/boat/adgroups?start_date=${startDate}&end_date=${endDate}&platform=Amazon`,
+                `https://react-api-script.onrender.com/boat/ad-groups?start_date=${startDate}&end_date=${endDate}&platform=Amazon`,
                 {
                     method: "GET",
                     headers: {
@@ -163,221 +163,129 @@ const AdGroupsComponent = () => {
         }
     };*/
 
-    const AdGroupsViewColumn = [
-        {
-            field: "ad_group_name",
-            headerName: "AD GROUP",
-            width: 150,
-            align: "left",
-            headerAlign: "left",
-            /*renderCell: (params) => {
-    const isEditing = params.row.ad_group_id === editRowId;
+const AdGroupsViewColumn = [
+  {
+    field: "Ad_Group_Name",
+    headerName: "AD GROUP",
+    width: 180,
+    align: "left",
+    headerAlign: "left",
+  },
 
-    return (
-      <div className="d-flex align-items-center">
-        {isEditing ? (
-          <TextField
-            autoFocus
-            value={editedName}
-            size="small"
-            onChange={(e) => setEditedName(e.target.value)}
-            onBlur={() => handleUpdateName(params.row)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleUpdateName(params.row);
-              }
-            }}
-          />
-        ) : (
-       <>
-            <Typography variant="body2">{params.row.ad_group_name}</Typography>
-            <IconButton onClick={() => handleEditClick(params.row)}>
-              <EditIcon fontSize="small" />
-            </IconButton>
-          </>
-        )}
-      </div>
-    );
-  },*/
-                 
-        },
-        {
-            field: "status",
-            headerName: "STATUS",
-            width: 100,
-            renderCell: (params) => {
-                if (updatingStatus[params.row.campaign_type] && updatingStatus[params.row.ad_group_id] && updatingStatus[params.row.campaign_id]) {
-                    return <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}><CircularProgress size={24} /></Box>
-                }
-                return (<Switch
-                    checked={params.row.status === 1}
-                    onChange={() => handleToggle(params.row.campaign_type, params.row.ad_group_id, params.row.campaign_id)}
-                />)
-            }
-        },
-        {
+  {
+    field: "status",
+    headerName: "STATUS",
+    width: 110,
+    renderCell: (params) => (
+      <Switch
+        checked={params.row.status === 1}
+        onChange={() =>
+          handleToggle(
+            params.row.type_of_sheet,
+            params.row.Ad_Group_ID,
+            params.row.Campaign_ID
+          )
+        }
+      />
+    ),
+  },
 
-            field: "campaign_name",
-            headerName: "CAMPAIGN",
-            width: 220,
-            align: "left",
-            headerAlign: "left"
-        },
-        {
-            field: "spend_curr",
-            headerName: "SPENDS",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent
-                    mainValue={params.row.spend_curr}
-                    percentValue={params.row.spend_diff}
-                />
-            )
-        },
-        {
-            field: "sales_curr",
-            headerName: "SALES",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent
-                    mainValue={params.row.sales_curr}
-                    percentValue={params.row.sales_diff}
-                />
-            )
-        },
-        {
-            field: "impressions_curr",
-            headerName: "IMPRESSIONS",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent
-                    mainValue={params.row.impressions_curr}
-                    percentValue={params.row.impressions_diff}
-                />
-            )
-        },
-         {
-            field: "clicks_curr",
-            headerName: "CLICKS",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent
-                    mainValue={params.row.clicks_curr}
-                    percentValue={params.row.clicks_diff}
-                />
-            )
-        },
-        {
-            field: "orders_curr",
-            headerName: "ORDERS",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent
-                    mainValue={params.row.orders_curr}
-                    percentValue={params.row.orders_diff}
-                />
-            )
-        },
-        {
-            field: "ctr_curr",
-            headerName: "CTR",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <NewPercentageDataComponent
-                    firstValue={params.row.ctr_curr}
-                    secValue={params.row.ctr_diff}
-                />
-            )
-        },
-        {
-            field: "cpc_curr",
-            headerName: "CPC",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent
-                    mainValue={params.row.cpc_curr}
-                    percentValue={params.row.cpc_diff}
-                />
-            )
-        },
-        {
-            field: "cvr_curr",
-            headerName: "CVR",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <NewPercentageDataComponent
-                    firstValue={params.row.cvr_curr}
-                    secValue={params.row.cvr_diff}
-                />
-            )
-        },
-        {
-            field: "roas_curr",
-            headerName: "ROAS",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent
-                    mainValue={params.row.roas_curr}
-                    percentValue={params.row.roas_diff}
-                />
-            )
-        },
-        {
-            field: "acos_curr",
-            headerName: "ACOS",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <NewPercentageDataComponent
-                    firstValue={params.row.acos_curr}
-                    secValue={params.row.acos_diff}
-                />
-            )
-        },
-        {
-            field: "aov_curr",
-            headerName: "AOV",
-            width: 150,
-            type: "number",
-            align: "left",
-            headerAlign: "left",
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent
-                    mainValue={params.row.aov_curr}
-                    percentValue={params.row.aov_diff}
-                />
-            )
-        },
-    ];
+  {
+    field: "Campaign_Name_Informational_only",
+    headerName: "CAMPAIGN",
+    width: 260,
+    align: "left",
+    headerAlign: "left",
+  },
+
+  {
+    field: "Spend",
+    headerName: "SPENDS",
+    width: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Spend}
+        percentValue={params.row.Spend_diff}
+      />
+    ),
+  },
+
+  {
+    field: "Sales",
+    headerName: "SALES",
+    width: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Sales}
+        percentValue={params.row.Sales_diff}
+      />
+    ),
+  },
+
+  {
+    field: "Impressions",
+    headerName: "IMPRESSIONS",
+    width: 160,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Impressions}
+        percentValue={params.row.Impressions_diff}
+      />
+    ),
+  },
+
+  {
+    field: "Clicks",
+    headerName: "CLICKS",
+    width: 140,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Clicks}
+        percentValue={params.row.Clicks_diff}
+      />
+    ),
+  },
+
+  {
+    field: "Orders",
+    headerName: "ORDERS",
+    width: 140,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.Orders}
+        percentValue={params.row.Orders_diff}
+      />
+    ),
+  },
+
+  
+  {
+    field: "cvr",
+    headerName: "CVR",
+    width: 130,
+    renderCell: (params) => (
+      <NewPercentageDataComponent
+        firstValue={params.row.cvr}
+        secValue={params.row.cvr_diff}
+      />
+    ),
+  },
+
+  {
+    field: "roas",
+    headerName: "ROAS",
+    width: 130,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.roas}
+        percentValue={params.row.roas_diff}
+      />
+    ),
+  },
+
+  
+];
+
 
     return (
         <React.Fragment>

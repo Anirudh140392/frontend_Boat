@@ -14,6 +14,11 @@ const ExistingKeywordsDatatable = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
     const [loadingRows, setLoadingRows] = useState({});
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 100,
+    });
+    const [totalCount, setTotalCount] = useState(0);
 
     const [searchParams] = useSearchParams();
     const operator = searchParams.get("operator");
@@ -42,7 +47,7 @@ const ExistingKeywordsDatatable = () => {
         const endDate = formatDate(dateRange[0].endDate);
 
         try {
-            const response = await fetch(`https://react-api-script.onrender.com/boat/exsisting-negative-keyword?platform=${operator}&start_date=${startDate}&end_date=${endDate}`, {
+            const response = await fetch(`https://react-api-script.onrender.com/negative-keyword?platform=${operator}&start_date=${startDate}&end_date=${endDate}&page=${paginationModel.page + 1}&limit=${paginationModel.pageSize}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -57,6 +62,7 @@ const ExistingKeywordsDatatable = () => {
 
             const data = await response.json();
             setKeywordsData(data);
+            setTotalCount(data.total_count || data.count || 0); // Handle potential count field names
         } catch (error) {
             if (error.name === "AbortError") {
                 console.log("Previous request aborted due to operator change.");
@@ -82,7 +88,7 @@ const ExistingKeywordsDatatable = () => {
             }
             clearTimeout(timeout);
         }
-    }, [operator, dateRange]);
+    }, [operator, dateRange, paginationModel]);
 
     const handleAddNegativeKeyword = async (row) => {
         const token = localStorage.getItem("accessToken");
@@ -200,7 +206,11 @@ const ExistingKeywordsDatatable = () => {
                         isLoading={isLoading}
                         isExport={true}
                         columns={SuggestedKeywordsColumnAmazon}
-                        data={keywordsData.data || []} />
+                        data={keywordsData.data || []}
+                        rowCount={totalCount}
+                        paginationMode="server"
+                        onPaginationModelChange={setPaginationModel}
+                    />
                 </div>
             </div>
             <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }}

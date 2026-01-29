@@ -478,7 +478,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                 {!["Amazon"].includes(operatorName) && (
+                                 {!["Zepto"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/negative-keywords${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`

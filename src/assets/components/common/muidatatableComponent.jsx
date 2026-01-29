@@ -77,13 +77,13 @@ const MuiDataTableComponent = (props) => {
         price_change: false,
         roas_direct_change: false,
         availability_change: false,
-        spend_inr_diff:false,
-        sales_inr_diff:false,
-        impressions_diff:false,
-        spend_diff:false,
-        sales_diff:false,
-        estimated_budget_consumed_diff:false,
-        direct_atc_diff:false
+        spend_inr_diff: false,
+        sales_inr_diff: false,
+        impressions_diff: false,
+        spend_diff: false,
+        sales_diff: false,
+        estimated_budget_consumed_diff: false,
+        direct_atc_diff: false
     });
 
     const handleExport = (columns, rows) => {
@@ -136,6 +136,9 @@ const MuiDataTableComponent = (props) => {
                     disableRowSelectionOnClick
                     filterModel={filterModel}
                     onFilterModelChange={setFilterModel}
+                    paginationMode={props.paginationMode || "client"}
+                    rowCount={props.rowCount}
+                    onPaginationModelChange={props.onPaginationModelChange}
                     initialState={{
                         pagination: {
                             paginationModel: {
