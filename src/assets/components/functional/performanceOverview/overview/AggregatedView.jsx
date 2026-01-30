@@ -109,7 +109,7 @@ const AggregatedView = () => {
               ? "ad_type"
               : regionFilter.toLowerCase();
 
-      const url = `https://react-api-script.onrender.com/pidilite/aggregated-view?platform=${operator}&start_date=${startDate}&end_date=${endDate}&parameter_filter=${param}`;
+      const url = `https://react-api-script.onrender.com/boat/aggregated-view?platform=${operator}&start_date=${startDate}&end_date=${endDate}&parameter_filter=${param}`;
       const cacheKey = `cache:GET:${url}`;
       const response = await cachedFetch(
         url,

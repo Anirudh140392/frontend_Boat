@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import { Accordion } from "react-bootstrap";
+import { BsChevronDown } from "react-icons/bs";
 import { Link, useLocation, useSearchParams } from "react-router";
 import AvatarIcon from "./assets/icons/navbar/avatarIcon";
 import BlockersIcon from "./assets/icons/navbar/blockersIcon";
@@ -77,26 +78,26 @@ const RedirectLink = ({ url, label, pathName, onClick }) => {
                     iconHeight="15"
                     iconColor={pathName === url ? "#fff" : "#78a8df"}
                 />
-            ): label === "History" ? (
-        <HistoryIcon
-          iconClass="me-2"
-          iconWidth="15"
-          iconHeight="15"
-          iconColor={pathName === url ? "#fff" : "#78a8df"}
-        />
-      ) : label === "Watch Tower" ? (
-        <WatchTowerIcon
-          iconClass="me-2"
-          iconWidth="15"
-          iconHeight="15"
-          iconColor={pathName === url ? "#fff" : "#78a8df"}
-        />
-      ) : (
-        ""
-      )}
-      {label}
-    </Link>
-  );
+            ) : label === "History" ? (
+                <HistoryIcon
+                    iconClass="me-2"
+                    iconWidth="15"
+                    iconHeight="15"
+                    iconColor={pathName === url ? "#fff" : "#78a8df"}
+                />
+            ) : label === "Watch Tower" ? (
+                <WatchTowerIcon
+                    iconClass="me-2"
+                    iconWidth="15"
+                    iconHeight="15"
+                    iconColor={pathName === url ? "#fff" : "#78a8df"}
+                />
+            ) : (
+                ""
+            )}
+            {label}
+        </Link>
+    );
 };
 
 const Navbar = () => {
@@ -226,7 +227,7 @@ const Navbar = () => {
                     setError('Failed to fetch wallet balance');
                     setWalletBalance("N/A");
                     setWalletLabel("Wallet Balance");
-                    
+
                     // Log additional error details for debugging
                     if (err.response) {
                         console.error('API Error Response:', {
@@ -259,31 +260,31 @@ const Navbar = () => {
                 const brandWallet = data.data.brand_wallets[brandName];
                 if (brandWallet && brandWallet.length > 0) {
                     const balance = brandWallet[0].balance;
-                    return { 
-                        balance: formatCurrency(balance), 
-                        label: `${brandName} Balance` 
+                    return {
+                        balance: formatCurrency(balance),
+                        label: `${brandName} Balance`
                     };
                 }
                 // If brand not found in response, show 0
-                return { 
-                    balance: formatCurrency(0), 
-                    label: `${brandName} Balance` 
+                return {
+                    balance: formatCurrency(0),
+                    label: `${brandName} Balance`
                 };
             }
 
             // If no brand selected, use total_balance
             if (data.data.total_balance !== undefined) {
-                return { 
-                    balance: formatCurrency(data.data.total_balance), 
-                    label: "Total Wallet Balance" 
+                return {
+                    balance: formatCurrency(data.data.total_balance),
+                    label: "Total Wallet Balance"
                 };
             }
 
             // Fallback for old API structure
             if (data.data.wallet_balance !== undefined) {
-                return { 
-                    balance: formatCurrency(data.data.wallet_balance), 
-                    label: "Wallet Balance" 
+                return {
+                    balance: formatCurrency(data.data.wallet_balance),
+                    label: "Wallet Balance"
                 };
             }
 
@@ -327,7 +328,7 @@ const Navbar = () => {
                         className="img-fluid"
                     />
                 </div>
-                <div className="error-message" style={{color: '#ff6b6b', padding: '20px', textAlign: 'center'}}>
+                <div className="error-message" style={{ color: '#ff6b6b', padding: '20px', textAlign: 'center' }}>
                     {error}
                 </div>
             </div>
@@ -380,33 +381,47 @@ const Navbar = () => {
                 </div>
                 <div className="redirection-navbar-con">
                     <Accordion className="navbar-accordion">
-                     <Accordion.Item eventKey="1">
-              <Accordion.Header>Control Tower</Accordion.Header>
-              <Accordion.Body>
-                {["Amazon","Zepto","BigBasket","Blinkit","Swiggy"].includes(operatorName) && (
-                  <RedirectLink
-                    url={`/watch-tower${operatorTypeParams === ""
-                        ? `?operator=${OPERATOR.AMAZON}`
-                        : operatorTypeParams
-                      }`}
-                    label="Watch Tower"
-                    pathName={pathName}
-                    onClick={() =>
-                      setPathName(
-                        `/watch-tower${operatorTypeParams === ""
-                          ? `?operator=${OPERATOR.AMAZON}`
-                          : operatorTypeParams
-                        }`
-                      )
-                    }
-                  />
-                )}
-              </Accordion.Body>
-            </Accordion.Item>
                         <Accordion.Item eventKey="1">
-                            <Accordion.Header>Activation</Accordion.Header>
+                            <Accordion.Header>
+                                <div className="d-flex align-items-center justify-content-between w-100 pe-3">
+                                    <div className="d-flex align-items-center">
+                                        Control Tower
+                                    </div>
+                                    <BsChevronDown size={12} color="#fff" />
+                                </div>
+                            </Accordion.Header>
                             <Accordion.Body>
-                                {["Blinkit","Amazon","Zepto","Swiggy","BigBasket"].includes(operatorName) && (
+                                {["Amazon", "Zepto", "BigBasket", "Blinkit", "Swiggy"].includes(operatorName) && (
+                                    <RedirectLink
+                                        url={`/watch-tower${operatorTypeParams === ""
+                                            ? `?operator=${OPERATOR.AMAZON}`
+                                            : operatorTypeParams
+                                            }`}
+                                        label="Watch Tower"
+                                        pathName={pathName}
+                                        onClick={() =>
+                                            setPathName(
+                                                `/watch-tower${operatorTypeParams === ""
+                                                    ? `?operator=${OPERATOR.AMAZON}`
+                                                    : operatorTypeParams
+                                                }`
+                                            )
+                                        }
+                                    />
+                                )}
+                            </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="2">
+                            <Accordion.Header>
+                                <div className="d-flex align-items-center justify-content-between w-100 pe-3">
+                                    <div className="d-flex align-items-center">
+                                        Activation
+                                    </div>
+                                    <BsChevronDown size={12} color="#fff" />
+                                </div>
+                            </Accordion.Header>
+                            <Accordion.Body>
+                                {["Blinkit", "Amazon", "Zepto", "Swiggy", "BigBasket"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -424,7 +439,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                {["Amazon","Zepto","BigBasket","Blinkit","Swiggy"].includes(operatorName) && (
+                                {["Amazon", "Zepto", "BigBasket", "Blinkit", "Swiggy"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/rules${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -442,7 +457,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                {!["Blinkit","Amazon","Zepto","Swiggy"].includes(operatorName) && (
+                                {!["Blinkit", "Amazon", "Zepto", "Swiggy"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/keyword-analysis${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -460,7 +475,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                {!["Blinkit","Amazon","Zepto","Swiggy","BigBasket"].includes(operatorName) && (
+                                {!["Blinkit", "Amazon", "Zepto", "Swiggy", "BigBasket"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/product-analytics${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -478,7 +493,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                 {!["Zepto"].includes(operatorName) && (
+                                {!["Zepto"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/negative-keywords${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -496,7 +511,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                {["Blinkit","Amazon","Zepto","Swiggy"].includes(operatorName) && (
+                                {["Blinkit", "Amazon", "Zepto", "Swiggy"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/history${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -516,7 +531,7 @@ const Navbar = () => {
                                 )}
                             </Accordion.Body>
                         </Accordion.Item>
-                        
+
                     </Accordion>
                 </div>
             </div>

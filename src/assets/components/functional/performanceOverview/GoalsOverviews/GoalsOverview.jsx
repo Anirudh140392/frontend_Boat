@@ -32,7 +32,7 @@ const GoalsOverview = () => {
         setError(null);
         try {
             const token = localStorage.getItem("accessToken");
-            const url = `https://react-api-script.onrender.com/goalsengine/goals/list?platform=${operator}&brand=Pidilite`;
+            const url = `https://react-api-script.onrender.com/goalsengine/goals/list?platform=${operator}&brand=Boat`;
             console.log("Fetching from URL:", url);
 
             const response = await fetch(url, {

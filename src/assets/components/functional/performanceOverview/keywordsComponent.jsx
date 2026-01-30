@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState, useMemo, useRef } from "react";
 import MuiDataTableComponent from "../../common/muidatatableComponent";
 import '../../../styles/keywordsComponent/keywordsComponent.less';
-import { Typography, Snackbar, Alert, Button, Switch,Box } from "@mui/material";
+import { Typography, Snackbar, Alert, Button, Switch, Box } from "@mui/material";
 import overviewContext from "../../../../store/overview/overviewContext";
 import { useSearchParams, useNavigate } from "react-router";
 import ColumnPercentageDataComponent from "../../common/columnPercentageDataComponent";
@@ -19,13 +19,22 @@ const KeywordsComponent = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
     const [confirmation, setConfirmation] = useState({ show: false, campaignType: null, keywordId: null, targetId: null, adGroupId: null, campaignId: null });
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 100,
+    });
+    const [totalCount, setTotalCount] = useState(0);
 
     const [searchParams] = useSearchParams();
     const operator = searchParams.get("operator");
     const navigate = useNavigate()
 
     const getKeywordsData = async () => {
-        if (!operator) return;
+        console.log("getKeywordsData called. Operator:", operator, "DateRange:", dateRange, "Pagination:", paginationModel);
+        if (!operator) {
+            console.log("Operator missing, skipping fetch");
+            return;
+        }
 
         if (abortControllerRef.current) {
             abortControllerRef.current.abort();
@@ -46,9 +55,11 @@ const KeywordsComponent = () => {
 
         const startDate = formatDate(dateRange[0].startDate);
         const endDate = formatDate(dateRange[0].endDate);
+        const url = `https://react-api-script.onrender.com/boat/keyword?start_date=${startDate}&end_date=${endDate}&platform=${operator}&page=${paginationModel.page + 1}&limit=${paginationModel.pageSize}`;
+        console.log("Fetching URL:", url);
 
         try {
-            const response = await fetch(`https://react-api-script.onrender.com/boat/keyword?start_date=${startDate}&end_date=${endDate}&platform=${operator}`, {
+            const response = await fetch(url, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +73,9 @@ const KeywordsComponent = () => {
             }
 
             const data = await response.json();
+            console.log("Keywords fetched:", data);
             setKeywordsData(data);
+            setTotalCount(data.total_count || data.count || 0);
         } catch (error) {
             if (error.name === "AbortError") {
                 console.log("Previous request aborted due to operator change.");
@@ -88,7 +101,7 @@ const KeywordsComponent = () => {
             }
             clearTimeout(timeout);
         }
-    }, [operator, dateRange, campaignName]);
+    }, [operator, dateRange, campaignName, paginationModel]);
 
     useEffect(() => {
         getBrandsData()
@@ -105,210 +118,210 @@ const KeywordsComponent = () => {
         setConfirmation({ show: true, campaignType, keywordId, targetId, adGroupId, campaignId });
     };
 
-  const KeywordsColumnAmazon = [
-  {
-    field: "Keyword_Text",
-    headerName: "TARGET",
-    minWidth: 150,
-    renderCell: (params) => (
-     
-        <Typography className="redirect" variant="body2">
-          {params.row.Keyword_Text}
-        </Typography>
-     
-    ),
-  },
+    const KeywordsColumnAmazon = [
+        {
+            field: "Keyword_Text",
+            headerName: "TARGET",
+            minWidth: 150,
+            renderCell: (params) => (
 
-  {
-    field: "Bid",
-    headerName: "BID",
-    minWidth: 150,
-    type: "number",
-    renderCell: (params) => (
-      <BidCell
-        value={params.row.Bid}
-        campaignId={params.row.Campaign_ID}
-        targetId={params.row.Keyword_ID}
-        campaignType={params.row.Product}
-        adGroupId={params.row.Ad_Group_ID}
-        keywordId={params.row.Keyword_ID}
-        platform={operator}
-        onUpdate={(
-          campaignId,
-          targetId,
-          campaignType,
-          adGroupId,
-          keywordId,
-          newBid
-        ) => {
-          setKeywordsData(prev => ({
-            ...prev,
-            data: prev.data.map(row =>
-              row.Campaign_ID === campaignId &&
-              row.Keyword_ID === keywordId &&
-              row.Ad_Group_ID === adGroupId
-                ? { ...row, Bid: newBid }
-                : row
+                <Typography className="redirect" variant="body2">
+                    {params.row.Keyword_Text}
+                </Typography>
+
             ),
-          }));
-        }}
-        onSnackbarOpen={handleSnackbarOpen}
-      />
-    ),
-  },
+        },
 
-  {
-    field: "State",
-    headerName: "STATUS",
-    minWidth: 100,
-    renderCell: (params) => (
-      <Switch
-        checked={params.row.State === "enabled"}
-        onChange={() =>
-          handleToggle(
-            params.row.Product,
-            params.row.Keyword_ID,
-            params.row.Keyword_ID,
-            params.row.Ad_Group_ID,
-            params.row.Campaign_ID
-          )
-        }
-      />
-    ),
-  },
+        {
+            field: "Bid",
+            headerName: "BID",
+            minWidth: 150,
+            type: "number",
+            renderCell: (params) => (
+                <BidCell
+                    value={params.row.Bid}
+                    campaignId={params.row.Campaign_ID}
+                    targetId={params.row.Keyword_ID}
+                    campaignType={params.row.Product}
+                    adGroupId={params.row.Ad_Group_ID}
+                    keywordId={params.row.Keyword_ID}
+                    platform={operator}
+                    onUpdate={(
+                        campaignId,
+                        targetId,
+                        campaignType,
+                        adGroupId,
+                        keywordId,
+                        newBid
+                    ) => {
+                        setKeywordsData(prev => ({
+                            ...prev,
+                            data: prev.data.map(row =>
+                                row.Campaign_ID === campaignId &&
+                                    row.Keyword_ID === keywordId &&
+                                    row.Ad_Group_ID === adGroupId
+                                    ? { ...row, Bid: newBid }
+                                    : row
+                            ),
+                        }));
+                    }}
+                    onSnackbarOpen={handleSnackbarOpen}
+                />
+            ),
+        },
 
-  {
-    field: "Spend",
-    headerName: "SPENDS",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.Spend}
-        percentValue={params.row.Spend_diff}
-      />
-    ),
-  },
+        {
+            field: "State",
+            headerName: "STATUS",
+            minWidth: 100,
+            renderCell: (params) => (
+                <Switch
+                    checked={params.row.State === "enabled"}
+                    onChange={() =>
+                        handleToggle(
+                            params.row.Product,
+                            params.row.Keyword_ID,
+                            params.row.Keyword_ID,
+                            params.row.Ad_Group_ID,
+                            params.row.Campaign_ID
+                        )
+                    }
+                />
+            ),
+        },
 
-  {
-    field: "Sales",
-    headerName: "SALES",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.Sales}
-        percentValue={params.row.Sales_diff}
-      />
-    ),
-  },
+        {
+            field: "Spend",
+            headerName: "SPENDS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.Spend}
+                    percentValue={params.row.Spend_diff}
+                />
+            ),
+        },
 
-  {
-    field: "Impressions",
-    headerName: "IMPRESSIONS",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.Impressions}
-        percentValue={params.row.Impressions_diff}
-      />
-    ),
-  },
+        {
+            field: "Sales",
+            headerName: "SALES",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.Sales}
+                    percentValue={params.row.Sales_diff}
+                />
+            ),
+        },
 
-  {
-    field: "Clicks",
-    headerName: "CLICKS",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.Clicks}
-        percentValue={params.row.Clicks_diff}
-      />
-    ),
-  },
+        {
+            field: "Impressions",
+            headerName: "IMPRESSIONS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.Impressions}
+                    percentValue={params.row.Impressions_diff}
+                />
+            ),
+        },
 
-  {
-    field: "Orders",
-    headerName: "ORDERS",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.Orders}
-        percentValue={params.row.Orders_diff}
-      />
-    ),
-  },
+        {
+            field: "Clicks",
+            headerName: "CLICKS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.Clicks}
+                    percentValue={params.row.Clicks_diff}
+                />
+            ),
+        },
 
-  {
-    field: "ctr",
-    headerName: "CTR",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.ctr}
-        percentValue={params.row.ctr_diff}
-      />
-    ),
-  },
+        {
+            field: "Orders",
+            headerName: "ORDERS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.Orders}
+                    percentValue={params.row.Orders_diff}
+                />
+            ),
+        },
 
-  {
-    field: "cpc",
-    headerName: "CPC",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.cpc}
-        percentValue={params.row.cpc_diff}
-      />
-    ),
-  },
+        {
+            field: "ctr",
+            headerName: "CTR",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.ctr}
+                    percentValue={params.row.ctr_diff}
+                />
+            ),
+        },
 
-  {
-    field: "cvr",
-    headerName: "CVR",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.cvr}
-        percentValue={params.row.cvr_diff}
-      />
-    ),
-  },
+        {
+            field: "cpc",
+            headerName: "CPC",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.cpc}
+                    percentValue={params.row.cpc_diff}
+                />
+            ),
+        },
 
-  {
-    field: "roas",
-    headerName: "ROAS",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.roas}
-        percentValue={params.row.roas_diff}
-      />
-    ),
-  },
+        {
+            field: "cvr",
+            headerName: "CVR",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.cvr}
+                    percentValue={params.row.cvr_diff}
+                />
+            ),
+        },
 
-  {
-    field: "acos",
-    headerName: "ACOS",
-    minWidth: 150,
-    renderCell: (params) => (
-      <ColumnPercentageDataComponent
-        mainValue={params.row.acos}
-        percentValue={params.row.acos_diff}
-      />
-    ),
-  },
+        {
+            field: "roas",
+            headerName: "ROAS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.roas}
+                    percentValue={params.row.roas_diff}
+                />
+            ),
+        },
 
-  {
-    field: "Campaign_Name_Informational_only",
-    headerName: "CAMPAIGN",
-    minWidth: 300,
-  },
+        {
+            field: "acos",
+            headerName: "ACOS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.acos}
+                    percentValue={params.row.acos_diff}
+                />
+            ),
+        },
 
-  {
-    field: "Ad_Group_Name_Informational_only",
-    headerName: "AD GROUP",
-    minWidth: 150,
-  },
-];
+        {
+            field: "Campaign_Name_Informational_only",
+            headerName: "CAMPAIGN",
+            minWidth: 300,
+        },
+
+        {
+            field: "Ad_Group_Name_Informational_only",
+            headerName: "AD GROUP",
+            minWidth: 150,
+        },
+    ];
 
 
     const KeywordsColumnZepto = [
@@ -322,7 +335,7 @@ const KeywordsComponent = () => {
                 </div>
             ),
         },
-         { field: "match_type", headerName: "MATCH TYPE", minWidth: 150, headerAlign: "left", },
+        { field: "match_type", headerName: "MATCH TYPE", minWidth: 150, headerAlign: "left", },
         {
             field: "cpc",
             headerName: "BID",
@@ -420,7 +433,7 @@ const KeywordsComponent = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-         {
+        {
             field: "ctr",
             headerName: "CTR",
             minWidth: 150,
@@ -429,7 +442,7 @@ const KeywordsComponent = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-         {
+        {
             field: "aov",
             headerName: "AOV",
             minWidth: 150,
@@ -479,7 +492,7 @@ const KeywordsComponent = () => {
             headerAlign: "left",
         },
 
-       
+
         /*{
             field: "ad_type", headerName: "AD TYPE", minWidth: 150,
         },*/
@@ -490,7 +503,7 @@ const KeywordsComponent = () => {
         },
     ];
 
-      const KeywordsColumnBigBasket = [
+    const KeywordsColumnBigBasket = [
         {
             field: "Keyword",
             headerName: "TARGET",
@@ -501,10 +514,10 @@ const KeywordsComponent = () => {
                 </div>
             ),
         },
-         { field: "Match Type", headerName: "MATCH TYPE", minWidth: 150, headerAlign: "left", },
-        
-       
-       {
+        { field: "Match Type", headerName: "MATCH TYPE", minWidth: 150, headerAlign: "left", },
+
+
+        {
             field: "Spend",
             headerName: "SPENDS",
             minWidth: 170,
@@ -532,8 +545,8 @@ const KeywordsComponent = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-       
-       
+
+
 
         {
             field: "Cpm",
@@ -544,8 +557,8 @@ const KeywordsComponent = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
-         {
+
+        {
             field: "ACOS",
             headerName: "ACOS",
             minWidth: 150,
@@ -565,8 +578,8 @@ const KeywordsComponent = () => {
             headerAlign: "left",
         },*/
 
-       
-         {
+
+        {
             field: "ROAS",
             headerName: "ROAS",
             minWidth: 150,
@@ -576,7 +589,7 @@ const KeywordsComponent = () => {
             headerAlign: "left",
         },
 
-        
+
         {
             field: "Campaign Name",
             headerName: "CAMPAIGN",
@@ -596,7 +609,7 @@ const KeywordsComponent = () => {
                 </div>
             ),
         },
-         { field: "match_type", headerName: "MATCH TYPE", minWidth: 150, headerAlign: "left", },
+        { field: "match_type", headerName: "MATCH TYPE", minWidth: 150, headerAlign: "left", },
         {
             field: "ecpm",
             headerName: "BID",
@@ -629,8 +642,8 @@ const KeywordsComponent = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
-       
+
+
         /*{ field: "brand_name", headerName: "BRAND", minWidth: 150, type: "singleSelect", valueOptions: brands?.brands },*/
         {
             field: "spend",
@@ -712,11 +725,11 @@ const KeywordsComponent = () => {
             headerAlign: "left",
         },*/
 
-       
+
         /*{
             field: "ad_type", headerName: "AD TYPE", minWidth: 150,
         },*/
-         {
+        {
             field: "a2c",
             headerName: "ATC",
             minWidth: 150,
@@ -735,7 +748,7 @@ const KeywordsComponent = () => {
             headerAlign: "left",
         },
 
-       
+
         {
             field: "campaign_name",
             headerName: "CAMPAIGN",
@@ -743,16 +756,12 @@ const KeywordsComponent = () => {
         },
     ];
 
-    useEffect(() => {
-        getBrandsData()
-    }, [operator])
-
     const columns = useMemo(() => {
         if (operator === "Amazon") return KeywordsColumnAmazon;
 
         if (operator === "Zepto") return KeywordsColumnZepto;
-         if (operator === "BigBasket") return KeywordsColumnBigBasket;
-         if (operator === "Swiggy") return KeywordsColumnSwiggy;
+        if (operator === "BigBasket") return KeywordsColumnBigBasket;
+        if (operator === "Swiggy") return KeywordsColumnSwiggy;
         return [];
     }, [operator, brands, updatingKeywords]);
 
@@ -798,85 +807,103 @@ const KeywordsComponent = () => {
         setKeywordsData(prevData => ({
             ...prevData,
             data: prevData.data.map(keyword =>
-                keyword.campaign_id_x === campaignId && keyword.campaign_type_x === campaignType && keyword.keyword_id_x === keywordId && keyword.targeting_id_x === targetId && keyword.ad_group_id_x === adGroupId ? { ...keyword, status: keyword.status === 1 ? 0 : 1 } : keyword
+                keyword.Keyword_ID === keywordId &&
+                    keyword.Campaign_ID === campaignId &&
+                    keyword.Ad_Group_ID === adGroupId
+                    ? { ...keyword, State: keyword.State === "enabled" ? "paused" : "enabled" }
+                    : keyword
             )
         }));
     };
 
-    const confirmStatusChange = async () => {
-        setConfirmation({ show: false, campaignType: null, keywordId: null, targetId: null, adGroupId: null, campaignId: null });
+    const confirmToggle = async () => {
         const { campaignType, keywordId, targetId, adGroupId, campaignId } = confirmation;
+        const previousState = keywordsData.data.find(k => k.Keyword_ID === keywordId && k.Campaign_ID === campaignId && k.Ad_Group_ID === adGroupId)?.State;
+        const newState = previousState === "enabled" ? "paused" : "enabled";
 
-        setUpdatingKeywords(prev => ({ ...prev, [campaignId]: true, [campaignType]: true, [keywordId]: true, [targetId]: true, [adGroupId]: true }));
+        // Optimistic update
+        updateKeywordStatus(campaignType, keywordId, targetId, adGroupId, campaignId);
+        setConfirmation({ show: false, campaignType: null, keywordId: null, targetId: null, adGroupId: null, campaignId: null });
 
         try {
             const token = localStorage.getItem("accessToken");
             if (!token) throw new Error("No access token found");
-            const params = new URLSearchParams({
-                platform: operator,
-                campaign_type: campaignType,
-                keyword_id: keywordId,
-                target_id: targetId,
-                ad_group_id: adGroupId,
-                campaign_id: campaignId
-            });
-            const response = await fetch(`https://react-api-script.onrender.com/boat/toggle_keyword_or_target_state?${params.toString()}`, {
-                method: "PUT",
+
+            const response = await fetch(`https://react-api-script.onrender.com/boat/update_keyword_state`, {
+                method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
+                body: JSON.stringify({
+                    platform: operator,
+                    campaign_type: campaignType,
+                    keyword_id: keywordId,
+                    target_id: targetId,
+                    ad_group_id: adGroupId,
+                    state: newState,
+                    campaign_id: campaignId
+                }),
             });
 
-            if (!response.ok) throw new Error("Failed to update keyword status");
-            updateKeywordStatus(campaignType, keywordId, targetId, adGroupId, campaignId);
-            handleSnackbarOpen("Status updated successfully!", "success");
+            if (!response.ok) {
+                throw new Error("Failed to update status");
+            }
+
+            setSnackbar({ open: true, message: `Keyword ${newState} successfully`, severity: "success" });
         } catch (error) {
-            console.error("Error updating campaign status:", error);
-            handleSnackbarOpen("Failed to update status!", "error");
-        } finally {
-            setUpdatingKeywords(prev => {
-                const newState = { ...prev };
-                delete newState[campaignId];
-                delete newState[campaignType];
-                delete newState[adGroupId];
-                delete newState[keywordId];
-                delete newState[targetId];
-                return newState;
-            });
+            console.error("Update failed:", error);
+            // Revert on failure
+            updateKeywordStatus(campaignType, keywordId, targetId, adGroupId, campaignId);
+            setSnackbar({ open: true, message: "Failed to update status", severity: "error" });
         }
     };
 
     return (
-        <React.Fragment>
-            <Dialog open={confirmation.show} onClose={() => setConfirmation({ show: false, campaignType: null, keywordId: null, targetId: null, adGroupId: null, campaignId: null })}>
-                <DialogTitle>Confirm Status Change</DialogTitle>
-                <DialogContent>Are you sure you want to {confirmation.newStatus ? "activate" : "pause"} this campaign?</DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setConfirmation({ show: false, campaignType: null, keywordId: null, targetId: null, adGroupId: null, campaignId: null })}>Cancel</Button>
-                    <Button onClick={confirmStatusChange} color="primary">Confirm</Button>
-                </DialogActions>
-            </Dialog>
+        <div className="shadow-box-con-keywords">
+            <div className="datatable-con-keywords">
+                <MuiDataTableComponent
+                    isLoading={isLoading}
+                    isExport={true}
+                    columns={columns}
+                    data={keywordsData.data || []}
+                    rowCount={totalCount}
+                    paginationMode="server"
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={setPaginationModel}
+                />
+            </div>
             <TrendsModal
                 showTrendsModal={showTrendsModal}
-                setShowTrendsModal={setShowTrendsModal} />
-            <div className="shadow-box-con-keywords aggregated-view-con">
-                <div className="datatable-con-keywords">
-                    <MuiDataTableComponent
-                        isLoading={isLoading}
-                        isExport={true}
-                        columns={columns}
-                        data={keywordsData.data || []} />
-                </div>
-            </div>
-            <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                open={snackbar.open} autoHideDuration={4000} onClose={handleSnackbarClose}>
-                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} variant="filled" sx={{ width: "100%" }}>
+                setShowTrendsModal={setShowTrendsModal}
+            />
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: "100%" }}>
                     {snackbar.message}
                 </Alert>
             </Snackbar>
-        </React.Fragment>
-    )
+
+            <Dialog open={confirmation.show} onClose={() => setConfirmation({ ...confirmation, show: false })}>
+                <DialogTitle>Confirm Action</DialogTitle>
+                <DialogContent>
+                    Are you sure you want to change the status of this keyword?
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmation({ ...confirmation, show: false })} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmToggle} color="primary" autoFocus>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    );
 }
 
 export default KeywordsComponent;

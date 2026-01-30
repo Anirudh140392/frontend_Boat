@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://react-api-script.onrender.com/pidilite';
+const BASE_URL = 'https://react-api-script.onrender.com/boat';
 
 /**
  * Fetch Watch Tower data from API

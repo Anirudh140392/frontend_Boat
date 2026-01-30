@@ -17,7 +17,7 @@ const OverviewState = (props) => {
         },
     ]);
 
-    const formatDate = (date) => format(date, "yyyy-MM-dd");
+    const formatDate = useCallback((date) => format(date, "yyyy-MM-dd"), []);
 
     const [overviewData, setOverviewData] = useState({})
     const [brands, setBrands] = useState({})
@@ -99,7 +99,7 @@ const OverviewState = (props) => {
     }, [operator]);
 
     const getOverviewData = useCallback(async () => {
-        const data = await fetchAPI("home", setOverviewLoading);
+        const data = await fetchAPI("new-overview", setOverviewLoading);
         if (data) setOverviewData(data);
     }, [dateRange, operator]);
 

@@ -138,6 +138,7 @@ const MuiDataTableComponent = (props) => {
                     onFilterModelChange={setFilterModel}
                     paginationMode={props.paginationMode || "client"}
                     rowCount={props.rowCount}
+                    paginationModel={props.paginationModel}
                     onPaginationModelChange={props.onPaginationModelChange}
                     initialState={{
                         pagination: {

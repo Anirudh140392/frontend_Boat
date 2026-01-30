@@ -109,10 +109,7 @@ const TowerForAll = ({ dateRange, formatDate, apiData, loading, error }) => {
             <h5 className="mb-0 fw-semibold text-dark">Watchtower Overview</h5>
             <span className="badge bg-light text-dark ms-2">All</span>
           </div>
-          <div className="bg-light rounded-pill px-3 py-1 small shadow-sm">
-            <span className="fw-semibold text-dark">MTD</span>{" "}
-            <span className="text-muted">vs Previous Month</span>
-          </div>
+
         </div>
 
         {/* ===== Cards Row ===== */}

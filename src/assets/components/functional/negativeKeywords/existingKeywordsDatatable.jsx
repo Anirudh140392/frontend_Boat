@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState, useRef } from "react";
 import MuiDataTableComponent from "../../common/muidatatableComponent";
+import ColumnPercentageDataComponent from "../../common/columnPercentageDataComponent";
 import '../../../styles/keywordsComponent/keywordsComponent.less';
 import { Typography, Snackbar, Alert, CircularProgress } from "@mui/material";
 import overviewContext from "../../../../store/overview/overviewContext";
@@ -47,7 +48,7 @@ const ExistingKeywordsDatatable = () => {
         const endDate = formatDate(dateRange[0].endDate);
 
         try {
-            const response = await fetch(`https://react-api-script.onrender.com/negative-keyword?platform=${operator}&start_date=${startDate}&end_date=${endDate}&page=${paginationModel.page + 1}&limit=${paginationModel.pageSize}`, {
+            const response = await fetch(`https://react-api-script.onrender.com/boat/negative-keyword?&start_date=${startDate}&end_date=${endDate}&platform=${operator}&page=${paginationModel.page + 1}&limit=${paginationModel.pageSize}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -142,53 +143,122 @@ const ExistingKeywordsDatatable = () => {
     };
 
     const SuggestedKeywordsColumnAmazon = [
-        {
-            field: "keyword",
-            headerName: "KEYWORD",
-            minWidth: 150,
-            renderCell: (params) => (
-                <div className="text-icon-div cursor-pointer redirect" onClick={() => handleKeywordClick(params.row.keyword, params.row.campaign_id_y)}>
-                    <Typography variant="body2">{params.row.keyword}</Typography>
-                </div>
-            ),
-        },
-        {
-            field: "add_negative",
-            headerName: "",
-            minWidth: 150,
-            renderCell: (params) => {
-                const uniqueKey = params.row.keyword_id + params.row.campaign_type;
-                const isLoading = loadingRows[uniqueKey];
+        // ===== BASIC DETAILS =====
 
-                return (
-                    <div className="cursor-pointer">
-                        {isLoading ? (
-                            <CircularProgress size={20} />
-                        ) : (
-                            <DeleteForeverIcon color="error" onClick={() => handleAddNegativeKeyword(params.row)} />
-                        )}
-                    </div>
-                );
-            },
-            align: "center"
-        },
-        { field: "ad_type", headerName: "AD TYPE", minWidth: 150 },
+
+
         {
-            field: "campaign_name",
-            headerName: "CAMPAIGN NAME",
+            field: "Keyword_Text",
+            headerName: "KEYWORD",
+            minWidth: 160,
+
+        },
+        { field: "Match_Type", headerName: "MATCH TYPE", minWidth: 130 },
+        { field: "Product", headerName: "TYPE", minWidth: 150 },
+
+
+
+
+        {
+            field: "Portfolio_Name_Informational_only",
+            headerName: "PORTFOLIO NAME",
             minWidth: 200,
         },
+
+        // ===== PERFORMANCE (CURRENT) =====
         {
-            field: "ad_group_name",
-            headerName: "AD GROUP",
+            field: "Impressions",
+            headerName: "IMPRESSIONS",
             minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Impressions} percentValue={params.row.Impressions_diff} />
+            ), //type: "number", align: "left",
+            //headerAlign: "left",
         },
         {
-            field: "keyword_type",
-            headerName: "KEYWORD TYPE",
+            field: "Clicks",
+            headerName: "CLICKS",
             minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Clicks} percentValue={params.row.Clicks_diff} />
+            ), //type: "number", align: "left",
+            //headerAlign: "left",
         },
+        {
+            field: "Orders",
+            headerName: "ORDERS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Orders} percentValue={params.row.Orders_diff} />
+            ), //type: "number", align: "left",
+            //headerAlign: "left",
+        },
+
+        {
+            field: "Sales",
+            headerName: "SALES",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Sales} percentValue={params.row.Sales_diff} />
+            ), //type: "number", align: "left",
+            //headerAlign: "left",
+        },
+        {
+            field: "cpc",
+            headerName: "CPC",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.cpc} percentValue={params.row.cpc_diff} />
+            ), //type: "number", align: "left",
+            // headerAlign: "left",
+        },
+        {
+            field: "cvr",
+            headerName: "CVR",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.cvr} percentValue={params.row.cvr_diff} />
+            ), //type: "number", align: "left",
+            // headerAlign: "left",
+        },
+
+
+        {
+            field: "roas",
+            headerName: "ROAS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.roas} percentValue={params.row.roas_diff} />
+            ), //type: "number", align: "left",
+            // headerAlign: "left",
+        },
+
+        {
+            field: "acos",
+            headerName: "ACOS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.acos} percentValue={params.row.acos_diff} />
+            ), //type: "number", align: "left",
+            // headerAlign: "left",
+        },
+
+
+        {
+            field: "Campaign_Name_Informational_only",
+            headerName: "CAMPAIGN NAME",
+            minWidth: 240,
+        },
+
+
+        // ===== BIDDING =====
+        { field: "Bid", headerName: "KEYWORD BID", minWidth: 140 },
+       
+
     ];
+
+
+
 
     const handleSnackbarOpen = (message, severity) => {
         setSnackbar({ open: true, message, severity });

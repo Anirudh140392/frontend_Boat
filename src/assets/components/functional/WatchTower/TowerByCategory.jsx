@@ -18,11 +18,28 @@ const TowerByCategory = ({ dateRange, formatDate, apiData, loading, error }) => 
       const category = { name: categoryName };
 
       // Transform each platform's data
-      ['All', 'Blinkit', 'Zepto', 'Instamart'].forEach((platformKey) => {
+      const platformKeys = ['All', 'Amazon', 'Flipkart', 'Blinkit', 'Zepto', 'Instamart'];
+      const comingSoonPlatforms = ['Flipkart', 'Blinkit', 'Zepto', 'Instamart'];
+
+      platformKeys.forEach((platformKey) => {
         const platformData = platforms[platformKey];
         const platformKeyLower = platformKey.toLowerCase();
+        const isComingSoon = comingSoonPlatforms.includes(platformKey);
 
-        if (platformData) {
+        if (isComingSoon) {
+          category[platformKeyLower] = {
+            offtake: 'Coming Soon',
+            offtake_change: '',
+            ad_spends: 'Coming Soon',
+            ad_spends_change: '',
+            roas: 'Coming Soon',
+            roas_change: '',
+            impressions: 'Coming Soon',
+            impressions_change: '',
+            orders: 'Coming Soon',
+            orders_change: '',
+          };
+        } else if (platformData) {
           category[platformKeyLower] = {
             offtake: formatCurrency(platformData.Offtake),
             offtake_change: formatPercentage(platformData.Offtake_change),

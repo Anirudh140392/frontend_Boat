@@ -81,7 +81,7 @@ const AddEditGoal = ({ show, onClose, onSubmit, initialData = null, operator }) 
       }
 
       await axios.post(
-        `https://react-api-script.onrender.com/goalsengine/goals/create?platform=${operator}&brand=Pidilite`,
+        `https://react-api-script.onrender.com/goalsengine/goals/create?platform=${operator}&brand=Boat`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );

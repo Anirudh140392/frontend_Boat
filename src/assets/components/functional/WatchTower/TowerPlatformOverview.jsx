@@ -26,26 +26,52 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         apiKey: "All",
       },
       {
+        key: "amazon",
+        label: "Amazon",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg",
+        apiKey: "Amazon",
+      },
+     
+      {
         key: "blinkit",
         label: "Blinkit",
         logo: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Blinkit-yellow-rounded.svg",
         apiKey: "Blinkit",
+        isComingSoon: true,
       },
       {
         key: "zepto",
         label: "Zepto",
         logo: "https://upload.wikimedia.org/wikipedia/en/7/7d/Logo_of_Zepto.png",
         apiKey: "Zepto",
+        isComingSoon: true,
       },
+      
       {
         key: "instamart",
         label: "Instamart",
         logo: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Swiggy_Logo_2024.webp",
         apiKey: "Instamart",
+        isComingSoon: true,
+      },
+      {
+        key: "flipkart",
+        label: "Flipkart",
+        logo: "https://www.flipkart.com/apple-touch-icon-144x144.png",
+        apiKey: "Flipkart",
+        isComingSoon: true,
       },
     ];
 
     return platformConfigs.map((config) => {
+      // If coming soon, return special structure
+      if (config.isComingSoon) {
+        return {
+          ...config,
+          columns: [], // No columns, just coming soon state
+        };
+      }
+
       // If loading or no data, provide structure for skeleton
       const platformData = apiData?.overview_metrics?.[config.apiKey];
 
@@ -200,25 +226,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
               Platform Overview
             </div>
           </div>
-          <div className="d-flex align-items-center gap-2">
-            <div
-              className="d-flex align-items-center bg-light rounded-pill px-2"
-              style={{
-                backgroundColor: "#f2f6fb",
-                border: "1px solid #dee2e6",
-                height: 34,
-                width: 220,
-              }}
-            >
-              <input
-                type="text"
-                className="form-control border-0 bg-transparent shadow-none"
-                placeholder="Search"
-                style={{ fontSize: "0.85rem" }}
-              />
-              <BsSearch size={15} color="#6c757d" />
-            </div>
-          </div>
+
         </div>
         <div
           style={{
@@ -228,7 +236,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
           }}
         >
           <div
-            className="d-flex flex-nowrap align-items-start"
+            className="d-flex flex-nowrap align-items-stretch"
             style={{
               gap: 12,
               minWidth: "100%",
@@ -303,7 +311,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
                     borderRadius: 12,
                     background: "#f9fafb",
                     marginRight: 12,
-                    overflowY: "auto",
+                    overflowY: platform.isComingSoon ? "hidden" : "auto",
                     scrollbarWidth: "thin",
                   }}
                 >
@@ -353,29 +361,36 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
                     </Card>
                   </div>
 
-                  {platform.columns.map((c, i) => (
-                    <Card
-                      key={i}
-                      className="shadow-sm"
-                      style={{
-                        borderRadius: 10,
-                        border: "1px solid #e0e0e0",
-                        background: "#ffffff",
-                        marginBottom: 8,
-                        transition: "transform 0.1s ease",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.02)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    >
-                      <Card.Body className="py-2 px-3">
-                        <SmallCard item={c} />
-                      </Card.Body>
-                    </Card>
-                  ))}
+                  {platform.isComingSoon ? (
+                    <div className="d-flex align-items-center justify-content-center h-100 flex-column" style={{ minHeight: "400px", color: "#9ca3af" }}>
+                      {/* <div className="fw-semibold text-center px-3">We are working on integrating {platform.label}</div> */}
+                      <div className="small bg-light rounded-pill px-3 py-1 mt-2 text-uppercase fw-bold border" style={{ fontSize: "0.7rem", letterSpacing: "1px" }}>Coming Soon</div>
+                    </div>
+                  ) : (
+                    platform.columns.map((c, i) => (
+                      <Card
+                        key={i}
+                        className="shadow-sm"
+                        style={{
+                          borderRadius: 10,
+                          border: "1px solid #e0e0e0",
+                          background: "#ffffff",
+                          marginBottom: 8,
+                          transition: "transform 0.1s ease",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.transform = "scale(1.02)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.transform = "scale(1)")
+                        }
+                      >
+                        <Card.Body className="py-2 px-3">
+                          <SmallCard item={c} />
+                        </Card.Body>
+                      </Card>
+                    ))
+                  )}
                 </div>
               </div>
             ))}
