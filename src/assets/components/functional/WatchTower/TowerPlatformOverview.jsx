@@ -31,7 +31,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         logo: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg",
         apiKey: "Amazon",
       },
-     
+
       {
         key: "blinkit",
         label: "Blinkit",
@@ -46,7 +46,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         apiKey: "Zepto",
         isComingSoon: true,
       },
-      
+
       {
         key: "instamart",
         label: "Instamart",
@@ -57,13 +57,13 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
       {
         key: "flipkart",
         label: "Flipkart",
-        logo: "https://www.flipkart.com/apple-touch-icon-144x144.png",
+        logo: "https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Logo.png",
         apiKey: "Flipkart",
         isComingSoon: true,
       },
     ];
 
-    return platformConfigs.map((config) => {
+    const processedPlatforms = platformConfigs.map((config) => {
       // If coming soon, return special structure
       if (config.isComingSoon) {
         return {
@@ -79,7 +79,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         return {
           ...config,
           columns: [
-            { title: "Offtake", value: null, change: null },
+            { title: "Ad Revenue", value: null, change: null },
             { title: "Impressions", value: null, change: null },
             { title: "Orders", value: null, change: null },
             { title: "Ad Spends", value: null, change: null },
@@ -92,7 +92,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         ...config,
         columns: [
           {
-            title: "Offtake",
+            title: "Ad Revenue",
             value: formatCurrency(platformData.Offtake),
             change: {
               text: formatPercentage(platformData.Offtake_change),
@@ -142,6 +142,11 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         ],
       };
     });
+
+    return {
+      active: processedPlatforms.filter(p => !p.isComingSoon),
+      comingSoon: processedPlatforms.filter(p => p.isComingSoon)
+    };
   }, [apiData]);
 
   // SmallCard Component with Skeleton Logic
@@ -269,7 +274,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
                   <BsGrid3X3GapFill size={18} className="text-secondary" />
                 </div>
 
-                {platforms[0]?.columns.map((metric, i) => (
+                {platforms.active[0]?.columns.map((metric, i) => (
                   <Button
                     key={i}
                     variant="light"
@@ -291,7 +296,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
               </div>
             </div>
 
-            {platforms.map((platform) => (
+            {platforms.active.map((platform) => (
               <div
                 key={platform.key}
                 className="flex-shrink-0"
@@ -311,8 +316,8 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
                     borderRadius: 12,
                     background: "#f9fafb",
                     marginRight: 12,
-                    overflowY: platform.isComingSoon ? "hidden" : "auto",
-                    scrollbarWidth: "thin",
+                    overflowY: "auto",
+                    scrollbarWidth: "none",
                   }}
                 >
                   <div
@@ -361,39 +366,99 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
                     </Card>
                   </div>
 
-                  {platform.isComingSoon ? (
-                    <div className="d-flex align-items-center justify-content-center h-100 flex-column" style={{ minHeight: "400px", color: "#9ca3af" }}>
-                      {/* <div className="fw-semibold text-center px-3">We are working on integrating {platform.label}</div> */}
-                      <div className="small bg-light rounded-pill px-3 py-1 mt-2 text-uppercase fw-bold border" style={{ fontSize: "0.7rem", letterSpacing: "1px" }}>Coming Soon</div>
-                    </div>
-                  ) : (
-                    platform.columns.map((c, i) => (
-                      <Card
-                        key={i}
-                        className="shadow-sm"
-                        style={{
-                          borderRadius: 10,
-                          border: "1px solid #e0e0e0",
-                          background: "#ffffff",
-                          marginBottom: 8,
-                          transition: "transform 0.1s ease",
-                        }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.transform = "scale(1.02)")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.transform = "scale(1)")
-                        }
-                      >
-                        <Card.Body className="py-2 px-3">
-                          <SmallCard item={c} />
-                        </Card.Body>
-                      </Card>
-                    ))
-                  )}
+                  {platform.columns.map((c, i) => (
+                    <Card
+                      key={i}
+                      className="shadow-sm"
+                      style={{
+                        borderRadius: 10,
+                        border: "1px solid #e0e0e0",
+                        background: "#ffffff",
+                        marginBottom: 8,
+                        transition: "transform 0.1s ease",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.02)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    >
+                      <Card.Body className="py-2 px-3">
+                        <SmallCard item={c} />
+                      </Card.Body>
+                    </Card>
+                  ))}
                 </div>
               </div>
             ))}
+
+            {platforms.comingSoon.length > 0 && (
+              <div
+                className="flex-shrink-0"
+                style={{
+                  width: "min(300px, 50vw)",
+                  minWidth: 260,
+                  display: "flex",
+                  flexDirection: "column",
+                  zIndex: 4,
+                  gap: 8,
+                }}
+              >
+                <div
+                  className="p-3 h-100 d-flex flex-column"
+                  style={{
+                    border: "1px dashed #ced4da",
+                    borderRadius: 12,
+                    background: "#f8f9fa",
+                    marginRight: 12,
+                  }}
+                >
+                  <div className="mb-4">
+                    <div
+                      className="d-flex flex-wrap justify-content-center gap-2 mb-3"
+                    >
+                      {platforms.comingSoon.map((p) => (
+                        <div
+                          key={p.key}
+                          className="bg-white rounded-circle p-1 shadow-sm border"
+                          style={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          title={p.label}
+                        >
+                          <img
+                            src={p.logo}
+                            alt={p.label}
+                            style={{ width: "80%", height: "80%", objectFit: "contain" }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div
+                      className="text-center fw-bold text-muted border py-2 px-3 mx-auto rounded-pill"
+                      style={{
+                        fontSize: "0.85rem",
+                        backgroundColor: "#fff",
+                        width: "fit-content",
+                        boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
+                      }}
+                    >
+                      COMING SOON
+                    </div>
+                  </div>
+
+                  <div className="flex-grow-1 d-flex align-items-center justify-content-center">
+                    <div className="text-center text-secondary">
+                      <div className="mb-2">
+                        <BsInfoCircle size={24} className="opacity-50" />
+                      </div>
+                      <p className="small mb-0 px-3 opacity-75">
+                        We are currently integrating these platforms to provide you with comprehensive data insights.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </Card>

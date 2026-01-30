@@ -19,7 +19,7 @@ const TowerForAll = ({ dateRange, formatDate, apiData, loading, error }) => {
     if (apiData?.overview_metrics?.All) {
       return [
         {
-          title: "Offtake",
+          title: "Ad Revenue",
           value: formatCurrency(apiData.overview_metrics.All.Offtake),
           sub: "for MTD",
           change: formatPercentage(apiData.overview_metrics.All.Offtake_change),
@@ -68,7 +68,7 @@ const TowerForAll = ({ dateRange, formatDate, apiData, loading, error }) => {
 
     // Default structure with null values for loading state
     return [
-      { title: "Offtake", value: null, sub: "for MTD", prevText: "vs Previous Month" },
+      { title: "Ad Revenue", value: null, sub: "for MTD", prevText: "vs Previous Month" },
       { title: "Ad Spends", value: null, sub: "for MTD", prevText: "vs Previous Month" },
       { title: "ROAS", value: null, sub: "for MTD (Avg.)", prevText: "vs Previous Month" },
       { title: "Impressions", value: null, sub: "for MTD", prevText: "vs Previous Month" },

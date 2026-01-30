@@ -28,8 +28,8 @@ const TowerByCategory = ({ dateRange, formatDate, apiData, loading, error }) => 
 
         if (isComingSoon) {
           category[platformKeyLower] = {
-            offtake: 'Coming Soon',
-            offtake_change: '',
+            ad_revenue: 'Coming Soon',
+            ad_revenue_change: '',
             ad_spends: 'Coming Soon',
             ad_spends_change: '',
             roas: 'Coming Soon',
@@ -41,8 +41,8 @@ const TowerByCategory = ({ dateRange, formatDate, apiData, loading, error }) => 
           };
         } else if (platformData) {
           category[platformKeyLower] = {
-            offtake: formatCurrency(platformData.Offtake),
-            offtake_change: formatPercentage(platformData.Offtake_change),
+            ad_revenue: formatCurrency(platformData.Offtake),
+            ad_revenue_change: formatPercentage(platformData.Offtake_change),
             ad_spends: formatCurrency(platformData.Ad_Spends),
             ad_spends_change: formatPercentage(platformData.Ad_Spends_change),
             roas: formatROAS(platformData.ROAS),
@@ -54,8 +54,8 @@ const TowerByCategory = ({ dateRange, formatDate, apiData, loading, error }) => 
           };
         } else {
           category[platformKeyLower] = {
-            offtake: '-',
-            offtake_change: '-',
+            ad_revenue: '-',
+            ad_revenue_change: '-',
             ad_spends: '-',
             ad_spends_change: '-',
             roas: '-',

@@ -457,6 +457,19 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
+                                <a
+                                    href="https://app.powerbi.com/view?r=eyJrIjoiNjJlY2JmNjEtZWNiZC00NGY5LWI2NjItYWE4YzhhNTg2ZmQxIiwidCI6ImI1MGUyY2QyLWVlMmQtNGI2MC1hYjg1LWRjNGNlMDM5ZGE2YSJ9"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <PerformanceOverviewIcon
+                                        iconClass="me-2"
+                                        iconWidth="15"
+                                        iconHeight="15"
+                                        iconColor="#78a8df"
+                                    />
+                                    Performance marketing
+                                </a>
                                 {!["Blinkit", "Amazon", "Zepto", "Swiggy"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/keyword-analysis${operatorTypeParams === ""
