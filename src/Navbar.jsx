@@ -383,11 +383,8 @@ const Navbar = () => {
                     <Accordion className="navbar-accordion">
                         <Accordion.Item eventKey="1">
                             <Accordion.Header>
-                                <div className="d-flex align-items-center justify-content-between w-100 pe-3">
-                                    <div className="d-flex align-items-center">
-                                        Control Tower
-                                    </div>
-                                    <BsChevronDown size={12} color="#fff" />
+                                <div className="d-flex align-items-center">
+                                    Control Tower
                                 </div>
                             </Accordion.Header>
                             <Accordion.Body>
@@ -413,11 +410,8 @@ const Navbar = () => {
                         </Accordion.Item>
                         <Accordion.Item eventKey="2">
                             <Accordion.Header>
-                                <div className="d-flex align-items-center justify-content-between w-100 pe-3">
-                                    <div className="d-flex align-items-center">
-                                        Activation
-                                    </div>
-                                    <BsChevronDown size={12} color="#fff" />
+                                <div className="d-flex align-items-center">
+                                    Activation
                                 </div>
                             </Accordion.Header>
                             <Accordion.Body>
