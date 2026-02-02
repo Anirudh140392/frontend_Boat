@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState,useMemo, useRef } from "react";
+import React, { useEffect, useContext, useState, useMemo, useRef } from "react";
 import MuiDataTableComponent from "../../common/muidatatableComponent";
 import '../../../styles/keywordsComponent/keywordsComponent.less';
 import { Typography, Snackbar, Alert } from "@mui/material";
@@ -8,11 +8,16 @@ import ColumnPercentageDataComponent from "../../common/columnPercentageDataComp
 
 const ProductAnalyticsDatatable = () => {
 
-    const { dateRange, formatDate,getBrandsData, brands, } = useContext(overviewContext)
+    const { dateRange, formatDate, getBrandsData, brands, } = useContext(overviewContext)
 
     const [productAnalyticsData, setProductAnalyticsData] = useState({})
     const [isLoading, setIsLoading] = useState(false)
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 100,
+    });
+    const [totalCount, setTotalCount] = useState(0);
 
     const [searchParams] = useSearchParams();
     const operator = searchParams.get("operator");
@@ -41,8 +46,7 @@ const ProductAnalyticsDatatable = () => {
         const endDate = formatDate(dateRange[0].endDate);
 
         try {
-            const response = await fetch(`https://react-api-script.onrender.com/boat/product-analytics?platform=${operator}&start_date=${startDate}&end_date=${endDate}
-            `, {
+            const response = await fetch(`https://react-api-script.onrender.com/boat/product?platform=${operator}&start_date=${startDate}&end_date=${endDate}&page=${paginationModel.page + 1}&limit=${paginationModel.pageSize}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -57,6 +61,7 @@ const ProductAnalyticsDatatable = () => {
 
             const data = await response.json();
             setProductAnalyticsData(data);
+            setTotalCount(data.total_count || data.count || 0);
         } catch (error) {
             if (error.name === "AbortError") {
                 console.log("Previous request aborted due to operator change.");
@@ -82,7 +87,7 @@ const ProductAnalyticsDatatable = () => {
             }
             clearTimeout(timeout);
         }
-    }, [operator, dateRange]);
+    }, [operator, dateRange, paginationModel]);
 
     const ProductAnalyticsColumnAmazon = [
         {
@@ -97,8 +102,8 @@ const ProductAnalyticsDatatable = () => {
         },
         { field: "category", headerName: "CATEGORY", minWidth: 100 },
         { field: "ad_groups", headerName: "# AD GROUPS", minWidth: 150 },
-       
-       
+
+
         {
             field: "spends",
             headerName: "SPENDS",
@@ -108,7 +113,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
+
         {
             field: "direct_revenue",
             headerName: "SALES",
@@ -118,7 +123,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
+
         {
             field: "ctr",
             headerName: "CTR",
@@ -128,7 +133,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-       
+
         {
             field: "tacos",
             headerName: "TACOS",
@@ -138,7 +143,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
+
         {
             field: "roas_direct",
             headerName: "ROAS",
@@ -148,7 +153,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         }
-        
+
 
     ];
 
@@ -161,7 +166,7 @@ const ProductAnalyticsDatatable = () => {
     };
 
 
-     const ProductAnalyticsColumnZepto = [
+    const ProductAnalyticsColumnZepto = [
         {
             field: "product_name",
             headerName: "PRODUCT",
@@ -172,7 +177,7 @@ const ProductAnalyticsDatatable = () => {
                 </div>
             ),
         },
-       
+
         {
             field: "clicks",
             headerName: "CLICKS",
@@ -182,7 +187,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
+
         {
             field: "spend",
             headerName: "SPENDS",
@@ -192,7 +197,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
+
         {
             field: "impressions",
             headerName: "IMPRESSIONS",
@@ -202,7 +207,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
+
         {
             field: "aov",
             headerName: "AOV",
@@ -212,7 +217,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
+
         {
             field: "orders",
             headerName: "ORDERS",
@@ -222,7 +227,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
+
         {
             field: "revenue",
             headerName: "SALES",
@@ -232,7 +237,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-       
+
         {
             field: "ctr",
             headerName: "CTR",
@@ -242,7 +247,7 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
+
         {
             field: "apm",
             headerName: "CPM",
@@ -252,10 +257,10 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
-        
-        
-        
+
+
+
+
         {
             field: "roas",
             headerName: "ROAS",
@@ -265,18 +270,18 @@ const ProductAnalyticsDatatable = () => {
             ), type: "number", align: "left",
             headerAlign: "left",
         },
-        
-        
+
+
     ];
 
-     const columns = useMemo(() => {
-            if (operator === "Amazon") return ProductAnalyticsColumnAmazon;
-    
-            if (operator === "Zepto") return ProductAnalyticsColumnZepto;
-            return [];
-        }, [operator, brands]);
+    const columns = useMemo(() => {
+        if (operator === "Amazon") return ProductAnalyticsColumnAmazon;
 
-   
+        if (operator === "Zepto") return ProductAnalyticsColumnZepto;
+        return [];
+    }, [operator, brands]);
+
+
 
     return (
         <React.Fragment>
@@ -286,7 +291,12 @@ const ProductAnalyticsDatatable = () => {
                         isLoading={isLoading}
                         isExport={true}
                         columns={columns}
-                        data={productAnalyticsData.data || []} />
+                        data={productAnalyticsData.data || []}
+                        rowCount={totalCount}
+                        paginationMode="server"
+                        paginationModel={paginationModel}
+                        onPaginationModelChange={setPaginationModel}
+                    />
                 </div>
             </div>
             <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }}
