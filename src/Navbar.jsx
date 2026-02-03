@@ -538,6 +538,14 @@ const Navbar = () => {
                                 )}
                             </Accordion.Body>
                         </Accordion.Item>
+                        <Accordion.Item eventKey="3">
+                            <Accordion.Header>
+                                <div className="d-flex align-items-center">
+                                    Market Intelligence
+                                </div>
+                            </Accordion.Header>
+                            
+                        </Accordion.Item>
 
                     </Accordion>
                 </div>
