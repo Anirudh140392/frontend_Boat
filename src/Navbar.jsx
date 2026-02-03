@@ -539,12 +539,12 @@ const Navbar = () => {
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item eventKey="3">
-                            <Accordion.Header>
-                                <div className="d-flex align-items-center">
+                            <Accordion.Header title="Coming Soon">
+                                <div className="d-flex align-items-center" style={{ opacity: 0.7 }}>
                                     Market Intelligence
                                 </div>
                             </Accordion.Header>
-                            
+
                         </Accordion.Item>
 
                     </Accordion>
