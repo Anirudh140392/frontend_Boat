@@ -20,6 +20,7 @@ import axios from "axios";
 import { cachedAxiosGet } from "./services/cachedAxios";
 import { getCache } from "./services/cacheUtils";
 import WatchTowerIcon from "./assets/icons/navbar/watchTower";
+import BoatIcon from "./assets/icons/navbar/BoatIcon";
 
 const RedirectLink = ({ url, label, pathName, onClick }) => {
     return (
@@ -346,11 +347,10 @@ const Navbar = () => {
                     />
                 </div>
                 <div className="nav-profile-con d-flex">
-                    <AvatarIcon
+                    <BoatIcon
                         iconClass="me-2"
-                        iconWidth="30"
-                        iconHeight="30"
-                        iconColor="#fff"
+                        iconWidth="45"
+                        iconHeight="45"
                     />
                     <div className="profile-user-data">
                         <h3>{displayUsername}</h3>
@@ -540,6 +540,11 @@ const Navbar = () => {
                         </Accordion.Item>
 
                     </Accordion>
+                </div>
+                <div className="navbar-footer mt-auto text-center" style={{ padding: '15px', borderTop: '1px solid #4C5E74' }}>
+                    <h6 style={{ color: '#78a8df', fontSize: '12px', margin: 0 }}>
+                        Powered by <span style={{ color: '#fff', fontWeight: 'bold' }}>Trailytics</span>
+                    </h6>
                 </div>
             </div>
         </React.Fragment>
