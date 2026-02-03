@@ -44,7 +44,7 @@ const HEADERS = [
   { key: "clicks", label: "Clicks" },
   { key: "avg_cpc", label: "CPC" },
   { key: "orders", label: "Orders" },
-  { key: "cvr_percent", label: "CVR" },
+  { key: "ctr_percent", label: "CTR" },
   { key: "sales", label: "Sales" },
 ];
 
@@ -211,7 +211,7 @@ const AggregatedView = () => {
 
   const formatValue = (key, val) => {
     if (val === undefined || val === null) return "-";
-    if (key === "cvr_percent") return `${Number(val).toFixed(2)}%`;
+    if (key === "ctr_percent") return `${Number(val).toFixed(2)}%`;
     if (key === "sales" || key === "avg_cpc") return `₹${formatLargeNumber(val)}`;
     return formatLargeNumber(val);
   };
