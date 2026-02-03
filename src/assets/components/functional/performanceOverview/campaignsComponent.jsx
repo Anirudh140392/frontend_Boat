@@ -20,8 +20,14 @@ const CampaignsComponent = () => {
     const [campaignsData, setCampaignsData] = useState({})
     // const { dateRange, brands, getBrandsData, formatDate } = dataContext
     const [isLoading, setIsLoading] = useState(false)
+     const [paginationModel, setPaginationModel] = useState({
+            page: 0,
+            pageSize: 100,
+        });
     const [confirmation, setConfirmation] = useState({ show: false, campaignId: null, campaignType: null });
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+
+    const [totalCount, setTotalCount] = useState(0);
 
     const [searchParams] = useSearchParams();
     const operator = searchParams.get("operator");
@@ -35,219 +41,193 @@ const CampaignsComponent = () => {
 
 
 
-    const CampaignsColumnAmazon = [
-        {
-            field: "campaign_name",
-            headerName: "CAMPAIGN",
-            minWidth: 200,
-            renderCell: (params) => (
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 0.5,
-                        cursor: "pointer"
-                    }}
-                    onClick={() => handleCampaignClick(params.row.campaign_name, params.row.campaign_id)}
-                    className="redirect"
-                >
-                    {params.row.campaign_name}
-                </Box>
-            ),
-        },
-        {
-            field: "budget_inr_x",
-            headerName: "BUDGET",
-            minWidth: 200,
-            renderCell: (params) => <BudgetCell value={params.row.budget_inr_x} campaignId={params.row.campaign_id} platform={operator} campaignName={params.row.campaign_name} campaignType={params.row.campaign_type}
-                onUpdate={(
-                    campaignId,
-                    campaignName,
-                    campaignType,
-                    newBudget
-                ) => {
-                    console.log('Updating campaign:', {
-                        campaignId,
-                        campaignName,
-                        campaignType,
-                        newBudget,
-                    });
-
-                    setCampaignsData(prevData => {
-                        const updatedData = {
-                            ...prevData,
-                            data: prevData.data.map(campaign =>
-                                campaign.campaign_id === campaignId &&
-                                    campaign.campaign_name === campaignName &&
-                                    campaign.campaign_type === campaignType
-                                    ? { ...campaign, budget_inr_x: newBudget }
-                                    : campaign
-                            ),
-                        };
-
-                        console.log('Updated campaignsData:', updatedData);
-                        return updatedData;
-                    });
-                }} onSnackbarOpen={handleSnackbarOpen} />,
-            headerAlign: "left",
-            type: "number", align: "left",
-        },
-        {
-            field: "status",
-            headerName: "STATUS",
-            minWidth: 100,
-            renderCell: (params) => {
-                if (updatingCampaigns[params.row.campaign_id] && updatingCampaigns[params.row.campaign_type]) {
-                    return <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}><CircularProgress size={24} /></Box>;
-                }
-                return (
-                    <Switch
-                        disabled={params.row.status === 2}
-                        checked={params.row.status === 1}
-                        onChange={() => handleToggle(params.row.campaign_id, params.row.campaign_type)}
-                    />
-                )
-            },
-            type: "singleSelect",
-            valueOptions: STATUS_OPTIONS
-        },
-        {
-            field: "campaign_type",
-            headerName: "AD TYPE",
-            minWidth: 100,
-        },
-        {
-            field: "spend_inr_x",
-            headerName: "SPENDS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.spend_inr_x} percentValue={params.row.spend_inr_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "spend_inr_diff",
-            headerName: "SPENDS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "sales_inr_x",
-            headerName: "SALES",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.sales_inr_x} percentValue={params.row.sales_inr_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "sales_inr_diff",
-            headerName: "SALES % CHANGE",
-            hideable: false
-        },
-       
-       
-        {
-            field: "impressions_x",
-            headerName: "IMPRESSIONS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.impressions_x} percentValue={params.row.impressions_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "impressions_diff",
-            headerName: "IMPRESSIONS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "clicks_x",
-            headerName: "CLICKS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.clicks_x} percentValue={params.row.clicks_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "clicks_diff",
-            headerName: "CLICKS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "orders_x",
-            headerName: "ORDERS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.orders_x} percentValue={params.row.orders_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "orders_diff",
-            headerName: "ORDERS % CHANGE",
-            hideable: false
-        },
-         {
-            field: "ctr_x",
-            headerName: "CTR",
-            minWidth: 150,
-            renderCell: (params) => (
-                <NewPercentageDataComponent firstValue={params.row.ctr_x} secValue={params.row.ctr_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-         {
-            field: "cpc_x",
-            headerName: "CPC",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.cpc_x} percentValue={params.row.cpc_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-         {
-            field: "cvr_x",
-            headerName: "CVR",
-            minWidth: 150,
-            renderCell: (params) => (
-                <NewPercentageDataComponent firstValue={params.row.cvr_x} secValue={params.row.cvr_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "roas_x",
-            headerName: "ROAS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.roas_x} percentValue={params.row.roas_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "roas_diff",
-            headerName: "ROAS % CHANGE",
-            hideable: false
-        },
-        {
-            field: "acos_x",
-            headerName: "ACOS",
-            minWidth: 150,
-            renderCell: (params) => (
-                <NewPercentageDataComponent firstValue={params.row.acos_x} secValue={params.row.acos_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
-        },
-        {
-            field: "aov_x",
-            headerName: "AOV",
-            minWidth: 150,
-            renderCell: (params) => (
-                <ColumnPercentageDataComponent mainValue={params.row.aov_x} percentValue={params.row.aov_diff} />
-            ), type: "number", align: "left",
-            headerAlign: "left",
+  const CampaignsColumnAmazon = [
+  {
+    field: "campaign_name",
+    headerName: "CAMPAIGN",
+    minWidth: 220,
+    renderCell: (params) => (
+      <Box
+        sx={{ display: "flex", flexDirection: "column", gap: 0.5, cursor: "pointer" }}
+        onClick={() =>
+          handleCampaignClick(params.row.campaign_name, params.row.campaign_id)
         }
-    ];
+        className="redirect"
+      >
+        {params.row.campaign_name}
+      </Box>
+    ),
+  },
+
+  {
+    field: "budget",
+    headerName: "BUDGET",
+    minWidth: 180,
+    renderCell: (params) => (
+      <BudgetCell
+        value={params.row.budget}
+        campaignId={params.row.campaign_id}
+        platform={operator}
+        campaignName={params.row.campaign_name}
+        campaignType={params.row.campaign_type}
+        onUpdate={(
+          campaignId,
+          campaignName,
+          campaignType,
+          newBudget
+        ) => {
+          setCampaignsData((prev) => ({
+            ...prev,
+            data: prev.data.map((c) =>
+              c.campaign_id === campaignId &&
+              c.campaign_name === campaignName &&
+              c.campaign_type === campaignType
+                ? { ...c, budget: newBudget }
+                : c
+            ),
+          }));
+        }}
+        onSnackbarOpen={handleSnackbarOpen}
+      />
+    ),
+    type: "number",
+    align: "left",
+    headerAlign: "left",
+  },
+
+  {
+    field: "status",
+    headerName: "STATUS",
+    minWidth: 100,
+    renderCell: (params) => {
+      if (updatingCampaigns[params.row.campaign_id]) {
+        return (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <CircularProgress size={24} />
+          </Box>
+        );
+      }
+      return (
+        <Switch
+          disabled={params.row.status === 2}
+          checked={params.row.status === 1}
+          onChange={() =>
+            handleToggle(params.row.campaign_id, params.row.campaign_type)
+          }
+        />
+      );
+    },
+  },
+
+  {
+    field: "campaign_type",
+    headerName: "AD TYPE",
+    minWidth: 140,
+  },
+
+  {
+    field: "spend",
+    headerName: "SPENDS",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.spend}
+        percentValue={params.row.spend_abs_diff}
+      />
+    ),
+  },
+
+  {
+    field: "sales",
+    headerName: "SALES",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.sales}
+        percentValue={params.row.sales_abs_diff}
+      />
+    ),
+  },
+
+  {
+    field: "impressions",
+    headerName: "IMPRESSIONS",
+    minWidth: 150,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.impressions}
+        percentValue={params.row.impressions_abs_diff}
+      />
+    ),
+  },
+
+  {
+    field: "clicks",
+    headerName: "CLICKS",
+    minWidth: 140,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.clicks}
+        percentValue={params.row.clicks_abs_diff}
+      />
+    ),
+  },
+
+  {
+    field: "orders",
+    headerName: "ORDERS",
+    minWidth: 140,
+    renderCell: (params) => (
+      <ColumnPercentageDataComponent
+        mainValue={params.row.orders}
+        percentValue={params.row.orders_abs_diff}
+      />
+    ),
+  },
+
+  {
+    field: "ctr",
+    headerName: "CTR",
+    minWidth: 120,
+  
+  },
+
+  {
+    field: "cpc",
+    headerName: "CPC",
+    minWidth: 120,
+  
+  },
+
+  {
+    field: "cvr",
+    headerName: "CVR",
+    minWidth: 120,
+   
+  },
+
+  {
+    field: "roas",
+    headerName: "ROAS",
+    minWidth: 120,
+  
+  },
+
+  {
+    field: "acos",
+    headerName: "ACOS",
+    minWidth: 120,
+   
+  },
+
+  {
+    field: "aov",
+    headerName: "AOV",
+    minWidth: 140,
+   
+  },
+];
+
 
       const CampaignsColumnBigBasket = [
         {
@@ -715,7 +695,7 @@ const CampaignsComponent = () => {
         const endDate = formatDate(dateRange[0].endDate);
 
         try {
-            const response = await fetch(`https://react-api-script.onrender.com/boat/campaign?start_date=${startDate}&end_date=${endDate}&platform=${operator}`, {
+            const response = await fetch(`https://react-api-script.onrender.com/boat/campaign?start_date=${startDate}&end_date=${endDate}&platform=${operator}&page=${paginationModel.page + 1}&limit=${paginationModel.pageSize}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
